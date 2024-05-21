@@ -21,6 +21,17 @@ import json #til at gemme config filen
 import seaborn as sns
 import zipfile#til at gemme filer som zip
 import io#til at gemme filer som zip
+from io import StringIO
+
+import re
+import datetime
+import csv
+import sys
+
+import os
+from tempfile import NamedTemporaryFile
+
+
 
 # from config import ConfigState
 from data import load_data, create_road_pixels, create_trimming_result_pixels
@@ -44,8 +55,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.3 - NRN 13-02-2024 - ready for eksternal testing' #det der skrives i configuration filen
+current_version ='version 0.4 - JLB1 16-05-2024 - Ready for external testing.' #det der skrives i configuration filen
 versions_log_txt = '''
+version 0.4 - JLB1 16-05-2024 - Ready for external testing.
+A new reader is created reducing the amount to three main types corresponding to the camera types.
+
 NRN 14-02-2024  
 save as zip file is incluted. Figures is incluted in zip file. 
 
@@ -115,12 +129,12 @@ if config_values_available:
                 config_default_values[k] = config_values[k]
 #----
         
-#herunder skrives parameterværdierne ind. 
-if config_default_values['pixel_width'] == 0.25:  index_default = 0 
-elif config_default_values['pixel_width'] == 0.03:  index_default = 1
-config['pixel_width'] = st.sidebar.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
-if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
-if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+#herunder skrives parameterværdierne ind.
+# if config_default_values['pixel_width'] == 0.25:  index_default = 0 
+# elif config_default_values['pixel_width'] == 0.03:  index_default = 1
+# config['pixel_width'] = st.sidebar.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
+# if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+# if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
 
 
 config['roadwidth_threshold'] = st.sidebar.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=config_default_values['roadwidth_threshold'], step=1) #roadwidth_threshold: 50 # Threshold temperature used when estimating the road width.
@@ -182,11 +196,14 @@ def counter_func():
 col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
 #navnene på alle readers i readers.py gemmes her så de kan vælges
-reader_list = ['voegele_M30','TF_time_K', 'voegele_example','voegele_M119', 'voegele_taulov','TF_old',
-               'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
+reader_list = ['Voegele', 'TF','Moba']
+
+
+# reader_list = ['voegele_M30','TF_time_K', 'voegele_example','voegele_M119', 'voegele_taulov','TF_old',
+#                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
                
 with col1:
-    st.write('Reader is used to load input file. The choice of reader depends on the input file\'s formatting.')
+    st.markdown(':red[*Hvis readers ikke virker så skriv til Roadtherma@vd.dk, hvilken type valgt og vedhæft filen*] ')
     config['reader'] = st.selectbox('Define which reader to use', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
                                     on_change=counter_func )
     
@@ -197,24 +214,77 @@ if 'uploaded_data' not in st.session_state: #starter med at være tom
 
 with col2:
     st.write('Input file must be a csv file and in uft-8 encoding. If this is not the case, change it manually.')
+    # global uploaded_file
+    # uploaded_file.seek(0)
     uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
-
-#load den oploadede fil ind baseret på readers
+    # uploaded_file.seek(0)
+#load den uploadede fil ind baseret på readers
 if st.session_state.count != st.session_state.count_new:
     # st.write('count er ikke lig count ny')
     st.session_state.count_new= st.session_state.count_new+1
     if config['reader'] is None:
         st.write('You have to choose a reader before data is loaded.')
     elif uploaded_file is not None:
+        
+        
+        # if config['reader']=='TF':
+        #     print('Pixel width=0.03')
+        #     config['pixel_width']=0.03
+        # else: config['pixel_width']=0.25, print('Pixel width=0.25')
+        # if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+        # if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+
+
+        # Laver en temp fil som kan bruges mere en gang, så readerne virker
+        bytes_data = uploaded_file.read()
+        with NamedTemporaryFile(delete=False) as tmp:  # open a named temporary file
+            tmp.write(bytes_data)                      # write data from the uploaded file into it
+     
+        uploaded_file=tmp.name
+        print(tmp.name)
+        # os.remove(tmp.name)
+   
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
-        if config['reader']=='TF_time_K':
+        if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
+            
             st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
             st.write(additional_text)
+            # print(additional_text)
+        # try:
+        #     if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
+        #         st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
+        #         st.write(additional_text)
+        #     else:
+        #         st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
+        #         config['input data'] = st.session_state.uploadFile.name
+        #     #printer den uploaded dataframe 
+        #     st.dataframe(st.session_state['uploaded_data'])    
+        # except:
+            # os.remove(tmp.name)
+           
+        # if config['reader']=='TF_time_K':
+        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
+        #     st.write(additional_text)
+        # # For the new reader (v0.4)    
+        # elif config['reader']=="TF":
+        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
+        #     st.write(additional_text)
+        #     # st.write(res)
+        # elif config['reader']=="Moba":
+        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
+        #     st.write(additional_text)
+        #     # st.write(res)
+        # elif config['reader']=="Voegele":
+        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
+        #     st.write(additional_text)
+        #     # st.write(res)
+            
         else:
             st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
             config['input data'] = st.session_state.uploadFile.name
         #printer den uploaded dataframe 
         st.dataframe(st.session_state['uploaded_data'])
+        os.remove(tmp.name)
 elif st.session_state.count == st.session_state.count_new:
     # st.write('count = count_new så df bliver bare stående')
     st.dataframe(st.session_state['uploaded_data'])
@@ -223,6 +293,13 @@ elif st.session_state.count == st.session_state.count_new:
 
 df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten af koden. 
 
+if config['reader']=='TF':
+    config['pixel_width']=0.03
+else: config['pixel_width']=0.25
+if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+  
+# print(df)
 #=== Hvis man vil hente en datafil direkte kan dette også gøres således ===
 # config['reader'] = 'voegele_M30' #her skal reader angives
 # file_path = config['file_path'] #her skal stien skrives 
@@ -235,7 +312,7 @@ df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten 
 
 st.divider()
 ### Herunder kører hele programmet ##############
-######Istedet for process_job så sættes funktion ind herunder.  ######
+######I stedet for process_job så sættes funktion ind herunder.  ######
 
 figures = {}
 
@@ -245,6 +322,7 @@ st.write('When data is loaded correctly start trimming data and identifying the 
 run_trimming_checkbox = st.checkbox('run this section')
 
 if run_trimming_checkbox:
+    st.write('Because of the chosen reader the pixel width is: ', config['pixel_width'])
     st.write('The parameters used for trimming are specified here')
     with st.form(key='columns_in_form'):
         c1, c2, c3, c4 = st.columns(4)
@@ -255,7 +333,7 @@ if run_trimming_checkbox:
         with c3:
             config['manual_trim_longitudinal_start'] = st.number_input('manual_trim_longitudinal_start', value=0)
         with c4:
-            config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=df.distance.iloc[-1])
+            config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=np.ceil(df.distance.iloc[-1]))
         submitButton = st.form_submit_button(label = 'Calculate') #når denne trykkes sendes de nye værdier til programmet
     
     #Her deles dataframen ind i en df med temperatur dta og en med resten af kolonnerne.
@@ -288,7 +366,8 @@ if run_trimming_checkbox:
     st.write('Based on the temperatures and chosen trimming values, the paved road section is identified.')
     #laver en dataframe med True der hvor den varme vej er og False der hvor der er under 50 grader
     road_pixels = create_road_pixels(temperatures_trimmed.values, roadwidths)
-        
+    # print(sum(temperatures_trimmed.values))
+    # print('road pixels:',np.count_nonzero(road_pixels))    
     if config['roller_detect_enabled']: #hvis den er slået til 
         roller_pixels = identify_roller_pixels(
             temperatures_trimmed.values, road_pixels, config['roller_detect_temperature'])
@@ -328,6 +407,7 @@ if run_script_checkbox:
         percentage=config['moving_average_percent'],
         window_meters=config['moving_average_window']
         )
+    # print('Moving average pixels:',np.count_nonzero(moving_average_pixels))
     #Her kigges der efter store spring i temperatur med naboer.
     gradient_pixels, clusters_raw = detect_high_gradient_pixels(
         temperatures_trimmed.values,
@@ -395,6 +475,7 @@ if run_script_checkbox:
     number_2 = np.count_nonzero(moving_average_pixels)
     #ratio 
     ratio = number_2/number_1
+    print(ratio*100)
     
     
     st.markdown('Number of pixels identified as road: **{}**'.format(number_1))
@@ -419,6 +500,11 @@ if run_script_checkbox:
     st.write('#')
     st.markdown(txt)
     st.write('#')
+   
+    # Laver temperatur intervallerne til en string så det kan vises i en dataframe før det skal downloades
+    statistics_dataframe['10 degrees gap'][0]=str(statistics_dataframe['10 degrees gap'][0])
+    statistics_dataframe['20 degrees gap'][0]=str(statistics_dataframe['20 degrees gap'][0])
+    statistics_dataframe['30 degrees gap'][0]=str(statistics_dataframe['30 degrees gap'][0])
     
 #%%---- Herunder gemmes csv når man er klar
 st.subheader('Save results')
@@ -496,7 +582,7 @@ if run_script_checkbox:
     
     
     #
-    
+    print(statistics_dataframe.dtypes)
     
     ### Output med de ting vi gerne vil have fra entreprenørerne 
     st.write('#')
