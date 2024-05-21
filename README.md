@@ -1,6 +1,8 @@
 # roadtherma_application
-This is the source code for the roadtherma application user interface 
+This is the source code for the roadtherma application user interface. 
+The application is available on roadtherma-application.streamlit.app. 
 
+For questions write roadtherma@vd.dk. 
 
 Python versionen skal være 3.8 for at det virker lokalt. Så når virtuelt environment skal laves skal det oprettes med. 
 conda create --name XX python=3.8
