@@ -55,8 +55,12 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.4 - JLB1 16-05-2024 - Ready for external testing.' #det der skrives i configuration filen
+current_version ='version 0.5 - JLB1 22-05-2024 - Ready for external testing and corrected reader.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.5 - JLB1 22-05-2024 - Ready for external testing and corrected reader.
+The new reader is corrected so voegele works again. There is added a manual pixel width toggle/selector. 
+
 version 0.4 - JLB1 16-05-2024 - Ready for external testing.
 A new reader is created reducing the amount to three main types corresponding to the camera types.
 
@@ -142,6 +146,9 @@ config['lane_threshold'] = st.sidebar.number_input('Threshold temperature used w
 config['gradient_enabled'] = st.sidebar.toggle('gradient_enabled', value=config_default_values['gradient_enabled'] )#gradient_enabled: True             # Whether or not to make detections using the "gradient" method.
 config['gradient_tolerance'] = st.sidebar.number_input('gradient_tolerance', value=config_default_values['gradient_tolerance'] , step=1)# gradient_tolerance: 10.0 # Tolerance on the temperature difference during temperature gradient detection.    
 
+# config['pixel_width'] = st.sidebar.toggle('pixel_width', value= st.sidebar.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default) )
+# config['pixel_width'] = st.sidebar.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
+
 #--- config indstillinger der ikke skal kunne ændres i appen, men stadig skal være i config filen. Gemmer den oprindelige widget så den er nem at sætte ind igen --- 
 config['show_plots'] = config_default_values['show_plots'] #st.sidebar.toggle('show_plots', value=config_default_values['show_plots'] )# Whether or not to show plots of data cleaning and enabled detections. default=True
 config['save_figures'] = config_default_values['save_figures'] #st.sidebar.toggle('save_figures', value=config_default_values['save_figures'] )# Whether or not to save the generated plots as png-files instead of showing them.
@@ -195,6 +202,7 @@ def counter_func():
 
 col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
+additional_text='' #starter med en tom
 #navnene på alle readers i readers.py gemmes her så de kan vælges
 reader_list = ['Voegele', 'TF','Moba']
 
@@ -203,21 +211,20 @@ reader_list = ['Voegele', 'TF','Moba']
 #                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
                
 with col1:
-    st.markdown(':red[*Hvis readers ikke virker så skriv til Roadtherma@vd.dk, hvilken type valgt og vedhæft filen*] ')
-    config['reader'] = st.selectbox('Define which reader to use', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+    st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with what type and append the file*] ')
+    config['reader'] = st.selectbox('Define which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
                                     on_change=counter_func )
     
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
     st.session_state['uploaded_data']=None
-
+    st.session_state['info_data']=''
 with col2:
     st.write('Input file must be a csv file and in uft-8 encoding. If this is not the case, change it manually.')
-    # global uploaded_file
-    # uploaded_file.seek(0)
+
     uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
-    # uploaded_file.seek(0)
+   
 #load den uploadede fil ind baseret på readers
 if st.session_state.count != st.session_state.count_new:
     # st.write('count er ikke lig count ny')
@@ -225,15 +232,6 @@ if st.session_state.count != st.session_state.count_new:
     if config['reader'] is None:
         st.write('You have to choose a reader before data is loaded.')
     elif uploaded_file is not None:
-        
-        
-        # if config['reader']=='TF':
-        #     print('Pixel width=0.03')
-        #     config['pixel_width']=0.03
-        # else: config['pixel_width']=0.25, print('Pixel width=0.25')
-        # if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
-        # if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
-
 
         # Laver en temp fil som kan bruges mere en gang, så readerne virker
         bytes_data = uploaded_file.read()
@@ -241,43 +239,15 @@ if st.session_state.count != st.session_state.count_new:
             tmp.write(bytes_data)                      # write data from the uploaded file into it
      
         uploaded_file=tmp.name
-        print(tmp.name)
+        # print(tmp.name)
         # os.remove(tmp.name)
    
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
         if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
             
-            st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-            st.write(additional_text)
+            st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
+            # st.write(additional_text)
             # print(additional_text)
-        # try:
-        #     if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
-        #         st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-        #         st.write(additional_text)
-        #     else:
-        #         st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
-        #         config['input data'] = st.session_state.uploadFile.name
-        #     #printer den uploaded dataframe 
-        #     st.dataframe(st.session_state['uploaded_data'])    
-        # except:
-            # os.remove(tmp.name)
-           
-        # if config['reader']=='TF_time_K':
-        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-        #     st.write(additional_text)
-        # # For the new reader (v0.4)    
-        # elif config['reader']=="TF":
-        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-        #     st.write(additional_text)
-        #     # st.write(res)
-        # elif config['reader']=="Moba":
-        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-        #     st.write(additional_text)
-        #     # st.write(res)
-        # elif config['reader']=="Voegele":
-        #     st.session_state['uploaded_data'], additional_text = load_data(uploaded_file, config['reader'])
-        #     st.write(additional_text)
-        #     # st.write(res)
             
         else:
             st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
@@ -290,16 +260,19 @@ elif st.session_state.count == st.session_state.count_new:
     st.dataframe(st.session_state['uploaded_data'])
     #st.write('count = count_new')
 
-
+st.write(st.session_state['info_data'])
 df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten af koden. 
+print(df)
+
+
 
 if config['reader']=='TF':
-    config['pixel_width']=0.03
-else: config['pixel_width']=0.25
-if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
-if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
-  
-# print(df)
+    config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+else: config['pixel_width']=0.25; config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+# if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+# if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+
+
 #=== Hvis man vil hente en datafil direkte kan dette også gøres således ===
 # config['reader'] = 'voegele_M30' #her skal reader angives
 # file_path = config['file_path'] #her skal stien skrives 
@@ -320,10 +293,21 @@ figures = {}
 st.subheader('Trimming data and identifying road')
 st.write('When data is loaded correctly start trimming data and identifying the road. ')
 run_trimming_checkbox = st.checkbox('run this section')
-
+# Showing the automatic chosen pixel width dependent on the camera type
+st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
 if run_trimming_checkbox:
-    st.write('Because of the chosen reader the pixel width is: ', config['pixel_width'])
-    st.write('The parameters used for trimming are specified here')
+    
+    # A manual method of choosing pixel width if the standard method is no working.
+    st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
+    if st.session_state.overwritepixel==True:
+        if config_default_values['pixel_width'] == 0.25:  index_default = 0 
+        elif config_default_values['pixel_width'] == 0.03:  index_default = 1
+        config['pixel_width'] = st.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
+        if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
+        if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8  
+        
+    # st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
+    st.write('The parameters used for trimming are specified here:')
     with st.form(key='columns_in_form'):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
@@ -336,10 +320,12 @@ if run_trimming_checkbox:
             config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=np.ceil(df.distance.iloc[-1]))
         submitButton = st.form_submit_button(label = 'Calculate') #når denne trykkes sendes de nye værdier til programmet
     
-    #Her deles dataframen ind i en df med temperatur dta og en med resten af kolonnerne.
+
+    #Her deles dataframen ind i en df med temperatur data og en med resten af kolonnerne.
     temperatures, metadata = split_temperature_data(df)
     # st.write(temperatures)#plot af dataframe
     
+    print(config['pixel_width'])
     # Initial trimming & cleaning of the dataset
     #giver dataframe der er trimmet i siderne og længden baseret på info i jobs filen og hvis der er en anden kørebane. + 
     temperatures_trimmed, trim_result, lane_result, roadwidths = clean_data(temperatures, metadata, config)
@@ -349,7 +335,7 @@ if run_trimming_checkbox:
     plt.suptitle('Raw data', fontsize=10)
     ax1.set_title('All data'); ax2.set_title('Trimmed data')
     nrn_functions.heatmaps_temperature_pixels(ax1, temperatures.values, metadata.distance, config['pixel_width'], include_colorbar=False)
-    ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [meters]')
+    ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
     #inkluder grænser på rå data figuren
     ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end'],color='k' )
     #inkluder longitudinal grænser også
@@ -358,7 +344,7 @@ if run_trimming_checkbox:
     
     trimmed_data_df = temperatures_trimmed.values
     nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
-    ax2.set_xlabel('Road width [meters]')
+    ax2.set_xlabel('Road width [m]')
     plt.tight_layout()
     st.pyplot(fig_heatmaps)
     #---- slut på plot ---- 
@@ -388,7 +374,7 @@ if run_trimming_checkbox:
         fig_heatmap1, (ax1) = plt.subplots(ncols=1, )
         ax1.set_title('Identified road')
         nrn_functions.heatmap_identified_road(ax1, pixel_category1, metadata.distance, config['pixel_width'], categories=['non-road', 'road'])
-        ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [meters]')
+        ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
         st.pyplot(fig_heatmap1)
 #--------
 

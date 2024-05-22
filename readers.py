@@ -103,11 +103,14 @@ def _read_voegele_1(filename):
         dfT = pd.read_csv(filename,delimiter=',',encoding='cp1252',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
         if  bool(re.search('"',str(dfT.loc[0][0])))==True:
             for col in dfT.columns:
-                dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
-    print(dfT.loc[0][0])            
-    print(len(dfT.loc[0][0]) )     
-    df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='iso-8859-10')
-    print(df)
+                dfT[col] = dfT[col].apply(lambda x:x.strip(''))
+    # print(dfT.loc[0][0])            
+    # print(len(dfT.loc[0][0]) ) 
+    try:
+        df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')
+    except:
+        df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
+    # print(df)
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
@@ -122,7 +125,7 @@ def _read_voegele_1(filename):
             
             df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
             # df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
-    print(df)
+    # print(df)
     # if len(dfT.loc[0][0])==31:
     #     try:
     #         df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
@@ -143,13 +146,13 @@ def _read_voegele_2(filename):
     VOEGELE_BASE_COLUMNS = ['time', 'distance', 'latitude', 'longitude']
     columns = VOEGELE_BASE_COLUMNS + ['signal_quality'] + temperatures_voegele
     try:
-        dfT = pd.read_csv(filename,delimiter=';', encoding='utf_8_sig',skiprows=5,nrows=10)
+        dfT = pd.read_csv(filename,delimiter=';',skiprows=5,nrows=10)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=';',encoding='cp1252',skiprows=5,nrows=10)
         if  bool(re.search('"',str(dfT.loc[0][0])))==True:
             for col in dfT.columns:
                 dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
-                
+    print(dfT)            
     df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
     print(df)
     if len(dfT.loc[0][0])==31:
@@ -163,6 +166,7 @@ def _read_voegele_2(filename):
         df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S")
     str1="\n All data used \n"
     res=0
+    print(df)
     return df, str1, res
 
 
@@ -507,278 +511,6 @@ def _read_moba3(filename):
     return df, str1, res   
 
 
-#%% MOBA V1? muligvis det rigtige der virker...
-
-# def _sensors_moba(filename):
-    
-#     sensors = pd.read_csv(filename, sep=';', skiprows=13, nrows=1)
-#     sensors.columns = ['name', 'number', 'none']
-#     n_sens = sensors.number + 1
-#     return n_sens
-
-
-# def _temperatures_moba(filename):
-    
-#     try:
-#         sensors = pd.read_csv(filename, sep=';', skiprows=13, nrows=1)
-#     except UnicodeDecodeError:
-#         sensors = pd.read_csv(filename, sep=';', skiprows=13, nrows=1,encoding='cp1252')
-        
-#     sensors.columns = ['name', 'number', 'none']
-#     n_sens = sensors.number + 1
-#     temperatures_MOBA = ['T{}'.format(n) for n in range(int(n_sens))]
-#     return temperatures_MOBA
-
-
-# MOBA_BASE_COLUMNS = ['index','distance', 'speed','temporary_time', 'longitude', 'latitude']
-           
-           
-           
-           
-# def _rows_moba(filename):
-  
-#    test = pd.read_csv(filename, index_col = False, sep=';', skiprows=27)
-#    rows = 0
-#    for i in range(test.index.size):
-#         if type(test.index[i]) == int:
-#                rows += 1
-#         elif test.index[i].isdigit() is True:
-#                rows += 1
-#         else:
-#             break
-                
-#             # for i in range(test.index.size):
-#             #     if test.index[i].isdigit() is True:
-#             #         rows += 1
-#             #     else:
-#             #         break    
-#    return rows
-
-
-        
-#             # with open(filename, newline='') as f:
-#             #      csv_reader = csv.reader(f)
-#             #      _csv_headings = next(csv_reader)
-                 
-                
-                
-                
-# def _read_moba1(filename): 
-#     print('Moba1')               
-#     with open(filename, newline='') as f:
-#         csv_reader = csv.reader(f)
-        
-#         _csv_headings = next(csv_reader)
-        
-#         first_line = next(csv_reader)
-#         for row in csv_reader:
-                    
-#             if row[0][0:5]=='Index':
-                        
-#                 skip=csv_reader.line_num
-                
-#                 break
-       
-#     date = first_line[1].split(' ')  
-#     date[0] = re.sub(r'\s+', '', first_line[2]) 
-#     date[1] = str(datetime.datetime.strptime(date[1], '%B').month)
-          
-#     date = '-'.join(date)
-#     temperatures_MOBA = _temperatures_moba(filename)
-#     MOBA_BASE_COLUMNS = ['index','distance', 'speed','temporary_time', 'longitude', 'latitude']
-#     columns = MOBA_BASE_COLUMNS + ['signal_quality', 'satellites'] + temperatures_MOBA
-#     try:
-#         df = pd.read_csv(filename,
-#                     skiprows=skip,
-#                     nrows=_rows_moba(filename),
-#                     delimiter=';',
-#                     names=columns,
-#                     quoting=csv.QUOTE_NONE,
-#                     quotechar='"',
-#                     doublequote=True)
-#     except UnicodeDecodeError:
-#         df = pd.read_csv(filename,
-#                     skiprows=skip,
-#                     nrows=_rows_moba(filename),
-#                     delimiter=';',
-#                     names=columns,
-#                     quoting=csv.QUOTE_NONE,
-#                     quotechar='"',
-#                     doublequote=True, encoding='cp1252')
-
-#     df = df.drop(labels='index', axis=1) 
-#     df['date'] = date
-#     df.drop(columns=[temperatures_MOBA[-1]],inplace=True)
-#     df = df.dropna()
-#     df=df.reset_index(drop=True)           
-#     df['temporary_time'] = df['date'] + [' '] + df['temporary_time']
-#     df = df.drop(labels='date', axis=1)
-#     # df.insert(loc=2, column='time', value=[datetime.datetime.strptime(df['temporary_time'][i],'%Y-%m-%d %H:%M:%S')for i in range(df.shape[0])])
-#     df.insert(loc=1, column='time', value=[datetime.datetime.strptime(df['temporary_time'][i],'%Y-%m-%d %H:%M:%S')for i in range(df.shape[0])])
-#     df['time'] = pd.to_datetime(df['time'])
-#     df = df.drop(labels='temporary_time', axis=1)
-#     df = df.drop(labels='speed', axis=1)
-#     df = df.drop(labels='satellites', axis=1)
-#     df = df[['time', 'distance','latitude', 'longitude', 'signal_quality']+ temperatures_MOBA[:len(temperatures_MOBA)-1]]
-#     df['distance'] = df['distance'].astype(float)
-#     df[temperatures_MOBA[:len(temperatures_MOBA)-1]]=df[temperatures_MOBA[:len(temperatures_MOBA)-1]].apply(pd.to_numeric, errors='coerce', axis=1).fillna(0, downcast='infer')
-#        # df = df.drop(labels=temperatures_MOBA[-1], axis=1)
-#     str1="\n All data used \n"
-#     res=0
-#     return df, str1, res
-
-
-
-
-
-
-
-     
-# def _sensors_moba2(filename):
-#          sensors2 = pd.read_csv(filename, sep = ';', skiprows=5, nrows=1, encoding='cp1252')
-#          sensors2=sensors2.iloc[:, list(range(2)) + [-1]]
-#          sensors2.columns = ['name', 'number', 'none']
-#          n_sens2 = sensors2.number 
-#          return n_sens2
-
-
-# def _temp_MOBA2(filename):
-#          sensors2 = pd.read_csv(filename, sep = ';', skiprows=5, nrows=1,encoding='cp1252')
-#          sensors2=sensors2.iloc[:, list(range(2)) + [-1]]
-#          sensors2.columns = ['name', 'number', 'none']
-#          n_sens2 = sensors2.number 
-#          temperatures_MOBA2 = ['T{}'.format(n) for n in range(int(n_sens2))]
-#          return temperatures_MOBA2
-
-#  #temperatures_MOBA = ['T{}'.format(n) for n in range(_sensors_moba(filename))]
-# MOBA_BASE_COLUMNS2 = ['time','distance', 'latitude', 'longitude', 'altitude','humidity','pressure','air temp','wind speed']
-
-
-# def _rows_moba2(filename):
-#     try:
-#              test2 = pd.read_csv(filename, sep = ';', skiprows=33,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-#     except UnicodeDecodeError:
-#              test2 = pd.read_csv(filename, sep = ';', skiprows=33,encoding='cp1252',quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-        
-#     rows2 = 0
-#          #Finder første række index hvor det er nan.
-#     rows2=test2.loc[pd.isna(test2['Altitude [m]']), :].index[0]
-#          # for t in range(int(len(test2['Altitude [m]']))):
-#          #     if np.isnan(test2['Altitude [m]'].loc[t]) == False:
-               
-#          #         rows2 = rows2 + 1
-#          #         print(rows2)
-#          #     else: 
-#          #         # print(np.isnan(test2['Altitude [m]'][i])==True)
-#          #         # print(rows2)
-#          #         break
-            
-#     return rows2
-        
-# def _read_moba2(filename):
-#     print('Moba2')
-#     MOBA_BASE_COLUMNS2 = ['time','distance', 'latitude', 'longitude', 'altitude','humidity','pressure','air temp','wind speed']
-#     temperatures_MOBA2 = _temp_MOBA2(filename)
-#     columns = MOBA_BASE_COLUMNS2 + temperatures_MOBA2 + ['ScreedWidthLeft', 'ScreedWidthRight'] 
-#     try:
-#         df = pd.read_csv(filename, skiprows=34,nrows=_rows_moba2(filename), delimiter=';', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)    
-#     except UnicodeDecodeError:
-#         df = pd.read_csv(filename, skiprows=34,nrows=_rows_moba2(filename), delimiter=';', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')  
-#      # df = pd.read_csv(filename, skiprows=34,nrows=_rows_moba2(filename), delimiter=';', names=columns)    
-#     df['time']=[datetime.datetime.strptime(df['time'][i],'%d.%m.%Y %H:%M:%S')for i in range(df.shape[0])] 
-#     str1="\n All data used \n"
-#     res=0
-#      # print(df)
-#     return df, str1, res
-
-
-
-
-
-# # def _temperatures_moba3(filename):
-# #     try:
-# #         sensors = pd.read_csv(filename, sep=';', skiprows=5, nrows=1)
-# #     except UnicodeDecodeError:
-# #         sensors = pd.read_csv(filename, sep=';', skiprows=5, nrows=1,encoding='iso8859_10')
-# #     # sensors.columns = ['name', 'number']
-# #     n_sens = sensors.number
-# #     temperatures_MOBA = ['T{}'.format(n) for n in range(int(n_sens))]
-# #     return temperatures_MOBA
-
-# MOBA_BASE_COLUMNS = ['time',
-#                       'distance',
-#                       'latitude',
-#                       'longitude', 
-#                       'altitude',
-#                       'Sensor[Single IR Spot 1]',
-#                       'Sensor[Single IR Spot 2]',
-#                       'Humidity [%]',
-#                       'Pressure [hPa]',
-#                       'AirTemperature [°C]',
-#                       'WindSpeed [km/h]']
-
-
-#     # with open(filename, newline='') as f:
-#     #     csv_reader = csv.reader(f)
-#     #     _csv_headings = next(csv_reader)
-#     # first_line = next(csv_reader)
-# def _read_moba3(filename):
-#     print('Moba3')
-#     MOBA_BASE_COLUMNS = ['time',
-#                           'distance',
-#                           'latitude',
-#                           'longitude', 
-#                           'altitude',
-#                           'Sensor[Single IR Spot 1]',
-#                           'Sensor[Single IR Spot 2]',
-#                           'Humidity [%]',
-#                           'Pressure [hPa]',
-#                           'AirTemperature [°C]',
-#                           'WindSpeed [km/h]']
-    
-#     try:
-        
-#         sensors = pd.read_csv(filename, sep=';', skiprows=5, nrows=1)
-#     except UnicodeDecodeError:
-#         sensors = pd.read_csv(filename, sep=';', skiprows=5, nrows=1,delimiter='.',encoding='iso8859_10')
-
-#     sensors.columns = ['name', 'number']
- 
-#     n_sens = sensors.number
-#     temperatures_MOBA = ['T{}'.format(n) for n in range(int(n_sens))]
-#     columns = MOBA_BASE_COLUMNS + temperatures_MOBA   
-#     try:
-#         df = pd.read_csv(filename,
-#         index_col = False,
-#         skiprows=34,
-#         delimiter=';',
-#         names=columns,
-#         quoting=csv.QUOTE_NONE,
-#         quotechar='"',
-#         doublequote=True)
-#     except UnicodeDecodeError:
-#         df = pd.read_csv(filename,
-#         index_col = False,
-#         skiprows=34,
-#         delimiter=';',
-#         names=columns,
-#         quoting=csv.QUOTE_NONE,
-#         quotechar='"',
-#         doublequote=True,encoding='iso8859_10')
-#         # doublequote=True,encoding='uft_8_sig')
-
-#     df.insert(loc=1, column='time2', value=[datetime.datetime.strptime(df['time'][i],'%d.%m.%Y %H:%M:%S')for i in range(df.shape[0])])
-#     df = df[['time2', 'distance','latitude', 'longitude', 'Sensor[Single IR Spot 1]']+ temperatures_MOBA]
-#     df=df.rename(columns = {'time2':'time'})
-#     df = df.drop(labels=temperatures_MOBA[-1], axis=1)
-#     df = df.drop_duplicates('distance')
-#     df=df.reset_index(drop=True)
-#     str1="\n All data used \n"
-#     res=0
-#     return df, str1, res 
-#     # return df  
-
-
 
 
 #%% 
@@ -798,36 +530,3 @@ readers = {
 
 
 
-
-#%% TEST
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Entr 2 M40\\Udlægning 01062023 kl 02 udl 1\\KVS_20230601_XBB_TF_Entr2_M40_Hoved_2ud_1.csv'
-
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Entr 29 Hldv125\\Udlægning 20230923\\KVS_20230923_XBB_TF_Entr29_Hldv125_Hoved_1ud_1.csv'
-# df,str1=_read_TF(filename)
-
-
-## MOBA3
-## K:\DT\BBM\BEF\JLB1\Termografi\Moba test\Moba 4047
-# File='KVS_20230608_XAA_Moba_Entr4047_M40_Hoved_3ud_11.csv'
-# path = 'K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Moba test\\Moba 4047\\'+File
-# filename=path
-
-#moba1?
-# K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Moba test\\Moba\\PA-EA9C34D4-122299D4_20201021084444\\GAB_20201021_XBB_Moba_Entr4046_M40_hoved_1ud_12.csv
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Moba test\\Moba\\PA-EA9C34D4-122299D4_20201021084444\\GAB_20201021_XBB_Moba_Entr4046_M40_hoved_1ud_12.csv'
-
-# # K:\DT\BBM\BEF\JLB1\Termografi\Moba test\Entr 8 Hldv521x\Udlægning 31052022
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Moba test\\Entr 8 Hldv521x\\Udlægning 31052022\\KVS_20220531_XBB_Moba_Entr8_Hldv521_Hoved_1ud_1.csv'
-
-
-# df,str1=_read_Moba(filename)
-
-#Voegele_roller_example
-#K:\DT\BBM\BEF\JLB1\Termografi\Entr 27 Hldv480b\Udlægning 29092023 j
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Entr 27 Hldv480b\\Udlægning 29092023 j\\KVS_20230929_XAA_Vog_Entr27_Hldv480_Hoved_1ud_1.csv'
-
-# Voegele M30
-# K:\DT\BBM\BEF\JLB1\Termografi\Entr 25 M40ba\Udlægning 29082023
-# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\Entr 25 M40ba\\Udlægning 29082023\\KVS_20230829_XAA_Vog_Entr25_M40_Hoved_1ud_1.csv'
-
-# df,str1=_read_Voegele(filename)
