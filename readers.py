@@ -27,6 +27,7 @@ def _read_Voegele(filename):
         
         try:
             df, str1, res=function(filename)
+            df=df.replace(',','.')
             # df, str1, res=_read_voegele_1(filename)
         except:
             # df, str1, res=_read_voegele_2(filename)
@@ -36,7 +37,6 @@ def _read_Voegele(filename):
     else:
         raise Exception("No function succeeded.")
         # str1="No function succeeded."
-        df=df.replace(',','.')
     return df, str1#, res
 
 
