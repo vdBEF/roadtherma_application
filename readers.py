@@ -102,26 +102,26 @@ def _read_voegele_1(filename):
         dfT = pd.read_csv(filename,delimiter=',',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=',',encoding='cp1252',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-    print(bool(re.search('"',str(dfT.loc[0][0])))==True)
-    print(dfT)  
+    #print(bool(re.search('"',str(dfT.loc[0][0])))==True)
+    #print(dfT)  
     if  bool(re.search('"',str(dfT.loc[0][0])))==True:
         for col in dfT.columns:
-            # dfT[col] = dfT[col].apply(lambda x:x.strip(''))
-            dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
-    print(dfT)
-    print(dfT.loc[0][0])            
-    print(len(dfT.loc[0][0]) ) 
-    print(filename)
-    print(pd.read_csv(filename, skiprows=3, delimiter=',',quoting=csv.QUOTE_ALL, names=columns, quotechar='"', doublequote=True,encoding='cp1252'))
+            dfT[col] = dfT[col].apply(lambda x:x.strip(''))
+            #dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
+    # print(dfT)
+    #print(dfT.loc[0][0])            
+    #print(len(dfT.loc[0][0]) ) 
+    #print(filename)
+    #print(pd.read_csv(filename, skiprows=3, delimiter=',',quoting=csv.QUOTE_ALL, names=columns, quotechar='"',encoding='cp1252'))
     try:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')
     except:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-    print(df)
+    #print(df)
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
-            if len(dfT.loc[0][0])>=35:
+            if len(dfT.loc[0][0])==31:
                 try:
                     df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
                 except:
@@ -156,11 +156,15 @@ def _read_voegele_2(filename):
         dfT = pd.read_csv(filename,delimiter=';',skiprows=5,nrows=10)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=';',encoding='cp1252',skiprows=5,nrows=10)
-        if  bool(re.search('"',str(dfT.loc[0][0])))==True:
-            for col in dfT.columns:
-                dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
-    print(dfT)            
-    df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
+    print(dfT)    
+    if  bool(re.search('"',str(dfT.loc[0][0])))==True:
+        for col in dfT.columns:
+            dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
+    print(dfT)
+    try:
+        df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
+    except:
+        df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252')
     print(df)
     if len(dfT.loc[0][0])==31:
         try:
