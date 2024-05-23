@@ -528,7 +528,7 @@ if run_script_checkbox:
 if run_script_checkbox:
     
     st.markdown('### It is posible to download all files in one folder')
-    st.markdown('This will download several result files, configuration file and uploaded data. If you which to see the individual files before saving look at the individual file below ')
+    st.markdown('This will download several result files, configuration file and uploaded data. If you wish to see the individual files before saving look at the individual file below ')
     raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
     #herunder kan det hele gemmes i zip
@@ -658,7 +658,7 @@ if run_script_checkbox:
     config_json = json.dumps(config, indent=1)
     c1, c2 = st.columns([0.5, 0.5])
     with c1: 
-        st.write('Save the used parameter values in a configuration file. This enables usto run the exact same analysis again. You can look at the file below before saving.')
+        st.write('Save the used parameter values in a configuration file. This enables us to run the exact same analysis again. You can look at the file below before saving.')
     
     save_name4 = st.text_input('output name', value=input_file_name+'configuration_values.json')
     with c2:
