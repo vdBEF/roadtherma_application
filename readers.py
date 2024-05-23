@@ -99,7 +99,7 @@ def _read_voegele_1(filename):
     VOEGELE_BASE_COLUMNS = ['time', 'distance', 'latitude', 'longitude']
     columns = VOEGELE_BASE_COLUMNS + ['signal_quality'] + temperatures_voegele
     try:
-        dfT = pd.read_csv(filename,delimiter=',', encoding='utf_8_sig',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
+        dfT = pd.read_csv(filename,delimiter=',',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=',',encoding='cp1252',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
         if  bool(re.search('"',str(dfT.loc[0][0])))==True:
@@ -116,7 +116,7 @@ def _read_voegele_1(filename):
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
-            if len(dfT.loc[0][0])==31:
+            if len(dfT.loc[0][0])=>31:
                 try:
                     df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
                 except:
