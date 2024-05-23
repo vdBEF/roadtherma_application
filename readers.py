@@ -109,6 +109,8 @@ def _read_voegele_1(filename):
     print(dfT)
     print(dfT.loc[0][0])            
     print(len(dfT.loc[0][0]) ) 
+    print(filename)
+    print(pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252'))
     try:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')
     except:
