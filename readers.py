@@ -102,6 +102,7 @@ def _read_voegele_1(filename):
         dfT = pd.read_csv(filename,delimiter=',',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=',',encoding='cp1252',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
+        print(bool(re.search('"',str(dfT.loc[0][0])))==True)
         if  bool(re.search('"',str(dfT.loc[0][0])))==True:
             for col in dfT.columns:
                 dfT[col] = dfT[col].apply(lambda x:x.strip(''))
@@ -116,7 +117,7 @@ def _read_voegele_1(filename):
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
-            if len(dfT.loc[0][0])>=31:
+            if len(dfT.loc[0][0])>=35:
                 try:
                     df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
                 except:
