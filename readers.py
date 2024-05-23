@@ -105,13 +105,14 @@ def _read_voegele_1(filename):
         if  bool(re.search('"',str(dfT.loc[0][0])))==True:
             for col in dfT.columns:
                 dfT[col] = dfT[col].apply(lambda x:x.strip(''))
-    # print(dfT.loc[0][0])            
-    # print(len(dfT.loc[0][0]) ) 
+    print(dfT)
+    print(dfT.loc[0][0])            
+    print(len(dfT.loc[0][0]) ) 
     try:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')
     except:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-    # print(df)
+    print(df)
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
