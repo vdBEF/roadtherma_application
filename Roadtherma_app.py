@@ -58,7 +58,7 @@ st.sidebar.image(logo_image, caption=None, width=250)
 current_version ='version 0.6 - JLB1 30-05-2024 - Ready for external testing and corrected reader.' #det der skrives i configuration filen
 versions_log_txt = '''
 
-version 0.6 - JLB1 22-05-2024 - Ready for external testing and corrected reader.
+version 0.6 - JLB1 30-05-2024 - Ready for external testing and corrected reader.
 The trimming is corrected and small interface improvements has been done.
 
 version 0.5 - JLB1 22-05-2024 - Ready for external testing and corrected reader.
@@ -432,7 +432,7 @@ st.write('When the trimming is ok, start the analysis by checking the box below.
 run_script_checkbox = st.checkbox('Start the analysis')
 trim=None
 #%% Herunder køres programmet baseret på trimningen ovenover 
-if run_script_checkbox and trim==1: 
+if run_script_checkbox: #and trim==1: 
     # Calculating detections
     #Her regnes og sammenlignes med moving average af arealet rindt om hver pixel
     moving_average_pixels = detect_temperatures_below_moving_average(
