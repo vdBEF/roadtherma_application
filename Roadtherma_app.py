@@ -55,8 +55,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.5 - JLB1 22-05-2024 - Ready for external testing and corrected reader.' #det der skrives i configuration filen
+current_version ='version 0.6 - JLB1 30-05-2024 - Ready for external testing and corrected reader.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.6 - JLB1 22-05-2024 - Ready for external testing and corrected reader.
+The trimming is corrected and small interface improvements has been done.
 
 version 0.5 - JLB1 22-05-2024 - Ready for external testing and corrected reader.
 The new reader is corrected so voegele works again. There is added a manual pixel width toggle/selector. 
@@ -123,7 +126,7 @@ st.sidebar.markdown('# configuration options')
     
 config_values_available = st.sidebar.checkbox('Load configuration values from file')
 if config_values_available:
-    config_values_path = st.sidebar.file_uploader('Upload file with configuration values. OBS: right now this only work with json files created in this program. Do we want a function with yaml files aswell?') 
+    config_values_path = st.sidebar.file_uploader('Upload file with configuration values. OBS: right now this only work with json files created in this program.') 
     if config_values_path is not None:
         config_values = json.load(config_values_path)
         st.sidebar.write(config_values)
@@ -253,22 +256,53 @@ if st.session_state.count != st.session_state.count_new:
             st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
             config['input data'] = st.session_state.uploadFile.name
         #printer den uploaded dataframe 
-        st.dataframe(st.session_state['uploaded_data'])
+        # st.dataframe(st.session_state['uploaded_data'])
         os.remove(tmp.name)
+        # # remove messages/info if file or reader is removed    
+        if config['reader'] == None or uploaded_file == None :
+            st.session_state['info_data']=''
+            st.session_state['uploaded_data']=None
+            #shows a message about the data usage
+            st.write(st.session_state['info_data'])
+            st.session_state['uploaded_data']
+        else:    
+            st.dataframe(st.session_state['uploaded_data'])
+            st.write(st.session_state['info_data'])
 elif st.session_state.count == st.session_state.count_new:
     # st.write('count = count_new så df bliver bare stående')
-    st.dataframe(st.session_state['uploaded_data'])
+    if config['reader'] == None or uploaded_file == None:
+        st.session_state['uploaded_data']=None
+        st.dataframe(st.session_state['uploaded_data'])
+    else:
+        st.dataframe(st.session_state['uploaded_data'])
     #st.write('count = count_new')
 
-st.write(st.session_state['info_data'])
+# remove messages/info if file or reader is removed    
+# if config['reader'] == None or uploaded_file == None :
+#     st.session_state['info_data']=''
+#     st.session_state['uploaded_data']=None
+#     #shows a message about the data usage
+#     st.write(st.session_state['info_data'])
+#     st.session_state['uploaded_data']
+# else:    
+#     st.dataframe(st.session_state['uploaded_data'])
+#     st.write(st.session_state['info_data'])
+    
+   
 df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten af koden. 
 print(df)
 
+#Removes the pixel width value if the reader is not chosen
+if config['reader'] == None:
+    config['pixel_width']=''
+else:  
+    # defines the pixel width value based on the reader.
+    if config['reader']=='TF':
+        # config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
+        config['pixel_width']=0.03; config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8
+        # st.write('pixel adjust:',config['roadwidth_adjust_left'])
+    else: config['pixel_width']=0.25; config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
 
-
-if config['reader']=='TF':
-    config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
-else: config['pixel_width']=0.25; config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
 # if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
 # if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
 
@@ -292,19 +326,25 @@ figures = {}
 #%% ## finding the road
 st.subheader('Trimming data and identifying road')
 st.write('When data is loaded correctly start trimming data and identifying the road. ')
-run_trimming_checkbox = st.checkbox('run this section')
+run_trimming_checkbox = st.checkbox('Press to start trimming data')
 # Showing the automatic chosen pixel width dependent on the camera type
 st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
-if run_trimming_checkbox:
+# if uploaded_file == None:
+#     st.write('There is no file uploaded')
     
-    # A manual method of choosing pixel width if the standard method is no working.
+if run_trimming_checkbox and uploaded_file != None :
+
+    # st.session_state['info_data']=''
+    
+    trim=1    
+    # # A manual method of choosing pixel width if the standard method is no working.
     st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
         config['pixel_width'] = st.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
-        if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
-        if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8  
+        if config['pixel_width'] == 0.25: config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
+        if config['pixel_width'] == 0.03: config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8  
         
     # st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
     st.write('The parameters used for trimming are specified here:')
@@ -377,13 +417,22 @@ if run_trimming_checkbox:
         ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
         st.pyplot(fig_heatmap1)
 #--------
-
+elif uploaded_file == None :
+    trim=0
+    st.write(':blue[There is no uploaded file]')
+elif uploaded_file != None and config['reader'] == None : 
+    trim=0
+    st.write(':blue[Choose a camera type before trimming]')    
+elif uploaded_file != None and config['reader'] != None :
+    trim=0    
+    st.write(':green[Ready to trim]')
+    
 st.subheader('Run analysis')
-st.write('When the trimming is ok, run rest of the code by checking the box below. ')
-run_script_checkbox = st.checkbox('run rest of the code')
-
+st.write('When the trimming is ok, start the analysis by checking the box below. ')
+run_script_checkbox = st.checkbox('Start the analysis')
+trim=None
 #%% Herunder køres programmet baseret på trimningen ovenover 
-if run_script_checkbox: 
+if run_script_checkbox and trim==1: 
     # Calculating detections
     #Her regnes og sammenlignes med moving average af arealet rindt om hver pixel
     moving_average_pixels = detect_temperatures_below_moving_average(
@@ -418,8 +467,16 @@ if run_script_checkbox:
     
     st.pyplot(figures['moving_average']) #plot af moving average resultaterne
     if config['gradient_enabled']: st.pyplot(figures['gradient'])
-    
-    
+elif trim==None:
+    st.write('')
+elif trim==0:
+    st.write('')
+elif trim==0 and uploaded_file == None :
+    st.write(':blue[upload the data first]')
+elif trim==0 and uploaded_file != None and config['reader'] == None  :        
+    st.write(':blue[Choose a reader first]')
+elif trim==0 and uploaded_file != None and config['reader'] != None  :
+    st.write(':blue[Trim the data first]')
 #%% analyse efter moving average er udført 
 st.subheader('Statistis')
 # if run_script_checkbox: 
@@ -528,7 +585,7 @@ if run_script_checkbox:
 if run_script_checkbox:
     
     st.markdown('### It is posible to download all files in one folder')
-    st.markdown('This will download several result files, configuration file and uploaded data. If you wish to see the individual files before saving look at the individual file below ')
+    st.markdown('This will download several result files, configuration file and uploaded data. If you which to see the individual files before saving look at the individual file below ')
     raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
     #herunder kan det hele gemmes i zip
@@ -658,7 +715,7 @@ if run_script_checkbox:
     config_json = json.dumps(config, indent=1)
     c1, c2 = st.columns([0.5, 0.5])
     with c1: 
-        st.write('Save the used parameter values in a configuration file. This enables us to run the exact same analysis again. You can look at the file below before saving.')
+        st.write('Save the used parameter values in a configuration file. This enables usto run the exact same analysis again. You can look at the file below before saving.')
     
     save_name4 = st.text_input('output name', value=input_file_name+'configuration_values.json')
     with c2:
