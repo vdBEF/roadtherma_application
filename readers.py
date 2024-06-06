@@ -121,7 +121,7 @@ def _read_voegele_1(filename):
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
-            if len(dfT.loc[0][0])==31:
+            if len(dfT.loc[0][0])>=31:
                 try:
                     df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
                 except:
