@@ -46,7 +46,7 @@ from cli import _iter_segments
 import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
-st.markdown('# Roadtherma user interface')
+st.markdown('# Roadtherma')
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
 st.divider()
@@ -55,8 +55,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.6 - JLB1 30-05-2024 - Ready for external testing and corrected reader.' #det der skrives i configuration filen
+current_version ='version 0.7 - JLB1 07-06-2024 - Ready for external testing, corrected reader and interface improvements.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.7 - JLB1 07-06-2024 - Ready for external testing, corrected reader and interface improvements.
+Small layout and interface changes have been made. The voegele reader has also been corrected.
 
 version 0.6 - JLB1 30-05-2024 - Ready for external testing and corrected reader.
 The trimming is corrected and small interface improvements has been done.
@@ -66,22 +69,22 @@ The new reader is corrected so voegele works again. There is added a manual pixe
 
 version 0.4 - JLB1 16-05-2024 - Ready for external testing.
 A new reader is created reducing the amount to three main types corresponding to the camera types.
-
-NRN 14-02-2024  
-save as zip file is incluted. Figures is incluted in zip file. 
-
-*version 0.3 - NRN 13-02-2024 - ready for eksternal testing  
-Post analysis is updated to include all privious analysis from MAP script.  
-A result csv file is added.  
-Graphs under statistics is added as an posibility.  
-All readers is added*  
-
-*version 0.2 - NRN 08-02-2024  - prototype  
-Change sidebar to only contain relevant input.  
-change save function so name from input file is added to output name*
-
-*version 0.1 - test fase - NRN 2024*
 '''
+# NRN 14-02-2024  
+# save as zip file is incluted. Figures is incluted in zip file. 
+
+# *version 0.3 - NRN 13-02-2024 - ready for eksternal testing  
+# Post analysis is updated to include all privious analysis from MAP script.  
+# A result csv file is added.  
+# Graphs under statistics is added as an posibility.  
+# All readers is added*  
+
+# *version 0.2 - NRN 08-02-2024  - prototype  
+# Change sidebar to only contain relevant input.  
+# change save function so name from input file is added to output name*
+
+# *version 0.1 - test fase - NRN 2024*
+# '''
 
 
 #%%If we want to get the jobs file as in the original road therma script and save it as a config dictionary, this is tehe way:
@@ -109,7 +112,7 @@ change save function so name from input file is added to output name*
 config = {} #starter en ny config dictionary hvis alle værdierne kommer fra App. 
 config['Date of analysis'] = date.today().strftime('%Y-%m-%d')
 config['version'] = current_version
-config_default_values = {'pixel_width':0.25, 'roadwidth_threshold':50, 'autotrim_temperature':40, 'lane_threshold': 150,
+config_default_values = {'pixel_width':0.25, 'roadwidth_threshold':50, 'autotrim_temperature':40, 'lane_threshold': 160,
                          'roller_detect_enabled':False, 'roller_detect_temperature':50, 'roller_detect_interpolation':False,
                          'gradient_enabled':True, 'gradient_tolerance':10, 'plotting_segments':1, 'show_plots':True,
                          'save_figures':True, 'write_csv':True,'autotrim_enabled':False, 'autotrim_percentage':0.2,
@@ -187,7 +190,7 @@ title= config['title']
 
 
 #%% -- Upload data ---
-st.subheader('Select data to analyze')
+st.subheader('Select data to analyse')
 # Data loades ind ved hjælp af en counter der gemmes i session_state variablen. Dette gør at 
 # der ikke skal loades en dataframe hver gang der ændres på en parameter. Godt når der bruges store dataframes 
 
@@ -215,25 +218,36 @@ reader_list = ['Voegele', 'TF','Moba']
                
 with col1:
     st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with what type and append the file*] ')
-    config['reader'] = st.selectbox('Define which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+    config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
                                     on_change=counter_func )
-    
+    # config['reader'] = st.selectbox('Choose which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+    #                                 on_change=counter_func )
+# st.info('You have to choose a camera type before data is loaded')    
+
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
     st.session_state['uploaded_data']=None
     st.session_state['info_data']=''
 with col2:
-    st.write('Input file must be a csv file and in uft-8 encoding. If this is not the case, change it manually.')
+    st.write('Input file must be a csv file. If this is not the case, change it manually.')
+    # st.write('Input file must be a csv file and in uft-8 encoding. If this is not the case, change it manually.')
 
     uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
-   
+    
 #load den uploadede fil ind baseret på readers
 if st.session_state.count != st.session_state.count_new:
     # st.write('count er ikke lig count ny')
     st.session_state.count_new= st.session_state.count_new+1
-    if config['reader'] is None:
-        st.write('You have to choose a reader before data is loaded.')
+    if config['reader'] is None and uploaded_file!=None  :
+        # st.write(':blue[You have to choose a camera type before data is loaded.]')
+        st.info('You have to choose a camera type before data is loaded')
+    elif uploaded_file==None and config['reader']==None:
+        st.info('You have to upload a data file and choose a camera type')
+    elif uploaded_file==None and config['reader']!=None:
+        st.info('You have to upload a data file')
+    elif uploaded_file!=None and config['reader']==None:
+        st.info('You have to choose a camera type before data is loaded')
     elif uploaded_file is not None:
 
         # Laver en temp fil som kan bruges mere en gang, så readerne virker
@@ -317,6 +331,8 @@ else:
 # st.write('Input filen er:', file_path) 
 #--------------------------------------------------------------------------
 
+road_pixels=[0]
+
 st.divider()
 ### Herunder kører hele programmet ##############
 ######I stedet for process_job så sættes funktion ind herunder.  ######
@@ -331,12 +347,13 @@ run_trimming_checkbox = st.checkbox('Press to start trimming data')
 st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
 # if uploaded_file == None:
 #     st.write('There is no file uploaded')
+
     
-if run_trimming_checkbox and uploaded_file != None :
+if run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
 
     # st.session_state['info_data']=''
     
-    trim=1    
+    # trim=1    
     # # A manual method of choosing pixel width if the standard method is no working.
     st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
     if st.session_state.overwritepixel==True:
@@ -418,23 +435,28 @@ if run_trimming_checkbox and uploaded_file != None :
         st.pyplot(fig_heatmap1)
 #--------
 elif uploaded_file == None :
-    trim=0
-    st.write(':blue[There is no uploaded file]')
+    # trim=0
+    # st.write(':blue[There is no uploaded file]')
+    st.warning('Trimming is not possible because there is no uploaded file')
 elif uploaded_file != None and config['reader'] == None : 
-    trim=0
-    st.write(':blue[Choose a camera type before trimming]')    
+    # trim=0
+    # st.write(':blue[Choose a camera type before trimming]')
+    st.warning('Choose a camera type before trimming')    
 elif uploaded_file != None and config['reader'] != None :
-    trim=0    
-    st.write(':green[Ready to trim]')
+    # trim=0    
+    # st.write(':green[Ready to trim]')
+    st.success('Ready to trim')
     
+st.divider()    
 st.subheader('Run analysis')
 st.write('When the trimming is ok, start the analysis by checking the box below. ')
 run_script_checkbox = st.checkbox('Start the analysis')
-trim=None
+# trim=None
 #%% Herunder køres programmet baseret på trimningen ovenover 
-if run_script_checkbox: #and trim==1: 
+if run_script_checkbox and uploaded_file != None and config['reader'] != None : 
     # Calculating detections
     #Her regnes og sammenlignes med moving average af arealet rindt om hver pixel
+    # print(trim)
     moving_average_pixels = detect_temperatures_below_moving_average(
         temperatures_trimmed,
         road_pixels,
@@ -467,18 +489,31 @@ if run_script_checkbox: #and trim==1:
     
     st.pyplot(figures['moving_average']) #plot af moving average resultaterne
     if config['gradient_enabled']: st.pyplot(figures['gradient'])
-elif trim==None:
-    st.write('')
-elif trim==0:
-    st.write('')
-elif trim==0 and uploaded_file == None :
-    st.write(':blue[upload the data first]')
-elif trim==0 and uploaded_file != None and config['reader'] == None  :        
-    st.write(':blue[Choose a reader first]')
-elif trim==0 and uploaded_file != None and config['reader'] != None  :
-    st.write(':blue[Trim the data first]')
+
+# elif road_pixels ==None:
+#     st.write('')
+# elif road_pixels ==None and uploaded_file == None :
+#     st.write(':blue[upload data first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] == None  :        
+#     st.write(':blue[Choose a camera type first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] != None  :
+#     st.write(':blue[Trim data first]')
+    
+elif uploaded_file == None :
+    # st.write(':blue[There is no uploaded file]')
+    st.warning('Analysing is not possible because there is no uploaded file')
+elif uploaded_file != None and config['reader'] == None  :        
+    # st.write(':blue[Choose a camera type first]')
+    st.warning('Choose a camera type first before analysing')
+elif uploaded_file != None and config['reader'] != None and len(road_pixels)>1  :
+    # st.write(':green[Ready to analyse]') 
+    st.success('Ready to analyse')       
+elif uploaded_file != None and config['reader'] != None  :
+    # st.write(':blue[Trim data first]') 
+    st.warning('Trim data first') 
 #%% analyse efter moving average er udført 
-st.subheader('Statistis')
+st.divider()
+st.subheader('Statistics')
 # if run_script_checkbox: 
 #     # Plot statistics in relating to the gradient detection algorithm
 #     if config['gradient_statistics_enabled']:
@@ -508,9 +543,11 @@ if st.session_state.plot_temp_dist == True:
 
 
 #%%-------
+st.divider()
 st.subheader('post analysis')
-
-if run_script_checkbox:
+if uploaded_file == None or config['reader'] == None:
+    st.warning('No data has been processed yet')
+if run_script_checkbox and uploaded_file != None and config['reader'] != None:
     # DET MATTEOS SCRIPT GØR 
     #counting nuber of pixels in the road
     number_1 = np.count_nonzero(road_pixels)
@@ -548,15 +585,26 @@ if run_script_checkbox:
     statistics_dataframe['10 degrees gap'][0]=str(statistics_dataframe['10 degrees gap'][0])
     statistics_dataframe['20 degrees gap'][0]=str(statistics_dataframe['20 degrees gap'][0])
     statistics_dataframe['30 degrees gap'][0]=str(statistics_dataframe['30 degrees gap'][0])
+
+# elif road_pixels ==None:
+#     st.write('')
+# elif road_pixels ==None and uploaded_file == None :
+#     st.write(':blue[upload data first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] == None  :        
+#     st.write(':blue[Choose a camera type first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] != None  :
+#     st.write(':blue[Trim data first]')
+
     
 #%%---- Herunder gemmes csv når man er klar
+st.divider()
 st.subheader('Save results')
 st.write('When the analysis is good enough, the result can be saved either as one combined zip file or individually.')
 #----- 
 
 #Herunder er gemme funktion lavet med download knapper
 
-if run_script_checkbox:
+if run_script_checkbox and uploaded_file != None and config['reader'] != None:
    #Laver de dataframes der gemmes senere -- 
    save_raw_temp_df = nrn_functions.temperature_to_csv( temperatures_trimmed, metadata, road_pixels)
    save_ma_detections_df = nrn_functions.detections_to_csv( temperatures_trimmed, metadata, road_pixels, moving_average_pixels)
@@ -567,6 +615,16 @@ if run_script_checkbox:
    
    st.markdown('The default name to appear in all saved files is extracted from the input file. It can be changed here. This affects all files in the zip folder and the individual files.')
    input_file_name = st.text_input('Change default name', value=input_file_name)
+
+# elif road_pixels ==None:
+#     st.write('')
+# elif road_pixels ==None and uploaded_file == None :
+#     st.write(':blue[upload data first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] == None  :        
+#     st.write(':blue[Choose a camera type first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] != None  :
+#     st.write(':blue[Trim data first]')
+
 
 # if run_script_checkbox:
 #     st.write('gem figurer - hvis det skal gøres enkeltvis ')
@@ -582,10 +640,10 @@ if run_script_checkbox:
 #         mime="image/png"
 #         )
     
-if run_script_checkbox:
+if run_script_checkbox and uploaded_file != None and config['reader'] != None:
     
     st.markdown('### It is posible to download all files in one folder')
-    st.markdown('This will download several result files, configuration file and uploaded data. If you which to see the individual files before saving look at the individual file below ')
+    st.markdown('This will download several result files, configuration file and uploaded data. If you wish to see the individual files before saving look at the individual file below ')
     raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
     #herunder kan det hele gemmes i zip
@@ -615,7 +673,18 @@ if run_script_checkbox:
         mime="application/zip",
         )
 
-if run_script_checkbox:
+# elif road_pixels ==None:
+#     st.write('')
+# elif road_pixels ==None and uploaded_file == None :
+#     st.write(':blue[upload data first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] == None  :        
+#     st.write(':blue[Choose a camera type first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] != None  :
+#     st.write(':blue[Trim data first]')
+
+
+
+if run_script_checkbox and uploaded_file != None and config['reader'] != None:
     st.markdown('### It is posible to download individual files')
     
     @st.cache_data
@@ -715,7 +784,7 @@ if run_script_checkbox:
     config_json = json.dumps(config, indent=1)
     c1, c2 = st.columns([0.5, 0.5])
     with c1: 
-        st.write('Save the used parameter values in a configuration file. This enables usto run the exact same analysis again. You can look at the file below before saving.')
+        st.write('Save the used parameter values in a configuration file. This enables us to run the exact same analysis again. You can look at the file below before saving.')
     
     save_name4 = st.text_input('output name', value=input_file_name+'configuration_values.json')
     with c2:
@@ -728,7 +797,14 @@ if run_script_checkbox:
     with st.expander('See configuration file before saving'):
         st.write(config)
 
-
+# elif road_pixels ==None:
+#     st.write('')
+# elif road_pixels ==None and uploaded_file == None :
+#     st.write(':blue[upload data first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] == None  :        
+#     st.write(':blue[Choose a camera type first]')
+# elif road_pixels ==None and uploaded_file != None and config['reader'] != None  :
+#     st.write(':blue[Trim data first]')
 
 
 #%% Herunder er gemme funktionen der virker med en output sti. Dette virker kun når scriptet køres lokalt på en computer
