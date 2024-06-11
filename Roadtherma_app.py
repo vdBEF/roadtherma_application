@@ -274,7 +274,7 @@ if st.session_state.count != st.session_state.count_new:
         except:
             os.remove(tmp.name)
             
-        #print(tmp.name)    
+        print(tmp.name)    
         os.remove(tmp.name)
         
         # # remove messages/info if file or reader is removed    
