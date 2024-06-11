@@ -555,12 +555,15 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
     number_2 = np.count_nonzero(moving_average_pixels)
     #ratio 
     ratio = number_2/number_1
+    ratio = np.round(ratio,1)
     print(ratio*100)
     
     
     st.markdown('Number of pixels identified as road: **{}**'.format(number_1))
     st.markdown('Number of pixels detected with moving average method: **{}**'.format(number_2))
-    st.markdown('Ratio af pixels below {}% of moving average temperature: **{}%**'.format(config['moving_average_percent'], np.round(ratio*100,2) ))
+    #st.markdown('Ratio af pixels below {}% of moving average temperature: **{}%**'.format(config['moving_average_percent'], np.round(ratio*100,2) ))
+    st.markdown('')
+    st.markdown('Ratio af pixels below {}% of moving average temperature: **{}%**'.format(config['moving_average_percent'], ratio*100)
     
     #Regner intervaller
     statistics_dataframe = nrn_functions.summary_as_MAP(temperatures_trimmed, road_pixels, moving_average_pixels, filename=st.session_state.uploadFile.name)
