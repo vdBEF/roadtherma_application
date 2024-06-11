@@ -27,7 +27,9 @@ def _read_Voegele(filename):
         
         try:
             df, str1, res=function(filename)
-            
+            print(df)
+            df=df.replace(',','.')
+            print(df)
             # df, str1, res=_read_voegele_1(filename)
         except:
             # df, str1, res=_read_voegele_2(filename)
@@ -99,25 +101,21 @@ def _read_voegele_1(filename):
     VOEGELE_BASE_COLUMNS = ['time', 'distance', 'latitude', 'longitude']
     columns = VOEGELE_BASE_COLUMNS + ['signal_quality'] + temperatures_voegele
     try:
-        dfT = pd.read_csv(filename,delimiter=',',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
+        dfT = pd.read_csv(filename,delimiter=',', encoding='utf_8_sig',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=',',encoding='cp1252',skiprows=5,nrows=10,quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-    #print(bool(re.search('"',str(dfT.loc[0][0])))==True)
-    #print(dfT)  
+    print(dfT)
     if  bool(re.search('"',str(dfT.loc[0][0])))==True:
         for col in dfT.columns:
             dfT[col] = dfT[col].apply(lambda x:x.strip(''))
-            #dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
-    # print(dfT)
-    #print(dfT.loc[0][0])            
-    #print(len(dfT.loc[0][0]) ) 
-    #print(filename)
-    #print(pd.read_csv(filename, skiprows=3, delimiter=',',quoting=csv.QUOTE_ALL, names=columns, quotechar='"',encoding='cp1252'))
+    print(dfT)
+    print(dfT.loc[0][0])            
+    print(len(dfT.loc[0][0]) ) 
     try:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')
     except:
         df = pd.read_csv(filename, skiprows=3, delimiter=',', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True)
-    #print(df)
+    print(df)
     for col in df.columns:
         if col == 'time':
             df[col] = df[col].apply(lambda x:x.strip('"'))
@@ -140,9 +138,30 @@ def _read_voegele_1(filename):
     #         df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 02:00") # NOTE only difference between this and _read_vogele_taulov is the UTC-part here (ffs!)
     # else:
     #     df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S")
-    str1="\n All data used \n"
-    res=0 
-    print(df)           
+    # str1="\n All data used \n"
+    # res=0
+    
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures_voegele)): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    
+    
+    print(df)
+
+    for n in range(len(temperatures_voegele)): 
+        df['T{}'.format(n)]=df['T{}'.format(n)].astype(float)
+           
     return df, str1, res
 
 
@@ -156,12 +175,11 @@ def _read_voegele_2(filename):
         dfT = pd.read_csv(filename,delimiter=';',skiprows=5,nrows=10)
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=';',encoding='cp1252',skiprows=5,nrows=10)
-    print(dfT)    
     if  bool(re.search('"',str(dfT.loc[0][0])))==True:
         for col in dfT.columns:
             dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
     print(dfT)
-    try:
+    try:            
         df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
     except:
         df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252')
@@ -175,8 +193,26 @@ def _read_voegele_2(filename):
         
     else:
         df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S")
-    str1="\n All data used \n"
-    res=0
+    # str1="\n All data used \n"
+    # res=0
+    
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures_voegele)): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    for n in range(len(temperatures_voegele)): 
+        df['T{}'.format(n)]=df['T{}'.format(n)].astype(float)
+        
     print(df)
     return df, str1, res
 
@@ -194,8 +230,26 @@ def _read_TF_new(filename):
     df['time'] = [x[:-6] for x in df.time]
     df['time'] = pd.to_datetime(df.time, format=' %Y-%m-%dT%H:%M:%S')
     del df['T280']
-    str1="\n All data used \n"
-    res=0
+    # str1="\n All data used \n"
+    # res=0
+    
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures)): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    
+    
+    
     return df, str1, res
 
 def _read_TF_time(filename):
@@ -233,24 +287,37 @@ def _read_TF_time(filename):
 #del df['T280']
 
     str2=[]
-    for n in range(len(temperatures)):
-        if (df['T{}'.format(n)].max())<1000:
-            str2.append("DB")
-        else:
-            # str2[n]="Række(r) er fjernet pga temperatur højere end 1000C" 
-            str2.append("DS")
-    
-        res=str2.count("DS")
-        if    res >=1 :
-            str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
-        else:
-            str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"    
+    # for n in range(len(temperatures)):
+    #     str2.append(len(df[df['T{}'.format(n)] > 1000].index))
+        
+        
+    #     # if (df['T{}'.format(n)].max())<1000:
+    #     #     str2.append("DB")
+    #     # else:
+    #     #     # str2[n]="Række(r) er fjernet pga temperatur højere end 1000C" 
+    #     #     str2.append("DS")
+    # res=np.max(str2)
+    # res=str2.count("DS")
+    # if    res >=1 :
+    #         #res virker ikke...
+    #     str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    #     # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    # else:
+    #     str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    str2=len(df)
+    dftest=df.copy()    
     for n in range(len(temperatures)): 
         # print(df[df['T{}'.format(n)] > 1000])
         df = df.drop(df[df['T{}'.format(n)] > 1000].index)
         df=df.reset_index(drop=True)
         # str1 =
-    
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
     
     return df, str1, res
 
@@ -265,8 +332,24 @@ def _read_TF_old(filename):
     df = pd.read_csv(filename, skiprows=7, delimiter=',', names=columns)
     del df['distance_again']
     del df['T140'] # This is the last column of the dataset (which is empty)
-    str1="\n All data used \n"
-    res=0
+    # str1="\n All data used \n"
+    # res=0
+    
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures)): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    
     
     return df, str1, res
 
@@ -374,8 +457,25 @@ def _read_moba1(filename):
     df['distance'] = df['distance'].astype(float)
     df[temperatures_MOBA[:len(temperatures_MOBA)-1]]=df[temperatures_MOBA[:len(temperatures_MOBA)-1]].apply(pd.to_numeric, errors='coerce', axis=1).fillna(0, downcast='infer')
        # df = df.drop(labels=temperatures_MOBA[-1], axis=1)
-    str1="\n All data used \n"
-    res=0
+    
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures_MOBA)-1): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    
+    
+    # str1="\n All data used \n"
+    # res=0
     return df, str1, res     
                 
 
@@ -435,9 +535,25 @@ def _read_moba2(filename):
         df = pd.read_csv(filename, skiprows=34,nrows=_rows_moba2(filename), delimiter=';', names=columns, quoting=csv.QUOTE_NONE, quotechar='"', doublequote=True,encoding='cp1252')  
      # df = pd.read_csv(filename, skiprows=34,nrows=_rows_moba2(filename), delimiter=';', names=columns)    
     df['time']=[datetime.datetime.strptime(df['time'][i],'%d.%m.%Y %H:%M:%S')for i in range(df.shape[0])] 
-    str1="\n All data used \n"
-    res=0
+    # str1="\n All data used \n"
+    # res=0
      # print(df)
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures_MOBA2)): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n" 
+     
+     
     return df, str1, res
 
 
@@ -517,8 +633,23 @@ def _read_moba3(filename):
     df = df.drop(labels=temperatures_MOBA[-1], axis=1)
     df = df.drop_duplicates('distance')
     df=df.reset_index(drop=True)
-    str1="\n All data used \n"
-    res=0
+    # str1="\n All data used \n"
+    # res=0
+    str2=len(df)
+    dftest=df.copy()    
+    for n in range(len(temperatures_MOBA)-1): 
+        # print(df[df['T{}'.format(n)] > 1000])
+        df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+        df=df.reset_index(drop=True)
+        # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+            #res virker ikke...
+        str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+        # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+        str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"
+    
     return df, str1, res   
 
 
@@ -540,4 +671,19 @@ readers = {
         # }
 
 
+#%% TEST
+#K:\DT\BBM\BEF\JLB1\Termografi\2024\Entr 2 M40d\Udlægning 29042024 udl2_2
+# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\2024\\Entr 2 M40d\\Udlægning 29042024 udl2_2\\KVS_20240429_NCC_VOG_Entr. 2_M40_spor 1_hoved (2).csv'
 
+# df,str1=_read_Voegele(filename)
+
+
+# filename='K:\\DT\\BBM\\BEF\\JLB1\\Termografi\\2024\\Entr 2 M40d\\Udlægning 29042024 udl1\\KVS_20240429_XBB_TF_Entr2_M40_Hoved_2ud_1.csv'
+
+# df,str1=_read_TF(filename)
+
+
+# C:/Users/B306460/Downloads
+
+# filename='C:\\Users\\B306460\\Downloads\\14822232_20240602_082418_-_Udleagningstemperatur-24_06_03-UTC+02_00.csv'
+# df,str1=_read_Voegele(filename)
