@@ -259,7 +259,7 @@ if st.session_state.count != st.session_state.count_new:
         # print(tmp.name)
         # os.remove(tmp.name)
         #print(load_data(uploaded_file, config['reader'])
-        st.dataframe(load_data(uploaded_file, config['reader']))
+        #st.dataframe(load_data(uploaded_file, config['reader']))
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
         try:
             if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
@@ -277,7 +277,7 @@ if st.session_state.count != st.session_state.count_new:
             
         #st.write(tmp.name)    
         os.remove(tmp.name)
-        st.dataframe(load_data(uploaded_file, config['reader']))
+        #st.dataframe(load_data(uploaded_file, config['reader']))
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None:
             st.session_state['info_data']=''
