@@ -274,9 +274,9 @@ if st.session_state.count != st.session_state.count_new:
         except:
             os.remove(tmp.name)
             
-        st.write(tmp.name)    
+        #st.write(tmp.name)    
         os.remove(tmp.name)
-        st.write(load_data(uploaded_file, config['reader']))
+        st.dataframe(load_data(uploaded_file, config['reader']))
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None:
             st.session_state['info_data']=''
