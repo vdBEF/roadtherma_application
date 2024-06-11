@@ -258,20 +258,26 @@ if st.session_state.count != st.session_state.count_new:
         uploaded_file=tmp.name
         # print(tmp.name)
         # os.remove(tmp.name)
-   
+        
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
-        if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
+        try:
+            if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
             
-            st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
+                st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
             # st.write(additional_text)
             # print(additional_text)
             
-        else:
-            st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
-            config['input data'] = st.session_state.uploadFile.name
+            else:
+                st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
+                config['input data'] = st.session_state.uploadFile.name
         #printer den uploaded dataframe 
         # st.dataframe(st.session_state['uploaded_data'])
+        except:
+            os.remove(tmp.name)
+        print(tmp.name)    
         os.remove(tmp.name)
+        
+        print('test',load_data(uploaded_file, config['reader'])
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None :
             st.session_state['info_data']=''
