@@ -30,7 +30,7 @@ import sys
 
 import os
 from tempfile import NamedTemporaryFile
-
+import datetime
 
 
 # from config import ConfigState
@@ -49,6 +49,7 @@ import nrn_functions #funktioner lavet primært til streamlit app
 st.markdown('# Roadtherma')
 #st.write(os.listdir(path='/tmp'))
 st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
+st.write(datetime.datetime.fromtimestamp(os.path.getctime('/tmp/tmp_vm0fgkb')))
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
 st.divider()
