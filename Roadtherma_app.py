@@ -281,7 +281,7 @@ if st.session_state.count != st.session_state.count_new:
         os.remove(tmp.name)
         st.write('temp test efter')
         st.write(os.listdir(path='/tmp'))
-        open("/tmp/tmp_vm0fgkb")
+        os.remove("/tmp/tmp_vm0fgkb")
         #st.write(os.listdir('\tmp'))
         #st.dataframe(load_data(uploaded_file, config['reader']))
         # # remove messages/info if file or reader is removed    
