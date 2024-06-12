@@ -258,8 +258,8 @@ if st.session_state.count != st.session_state.count_new:
         uploaded_file=tmp.name
         print(tmp.name)
         # os.remove(tmp.name)
-        print('temp test før')
-        print(os.listdir(path='/tmp'))
+        st.write('temp test før')
+        st.write(os.listdir(path='/tmp'))
         #print(load_data(uploaded_file, config['reader'])
         #st.dataframe(load_data(uploaded_file, config['reader']))
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
