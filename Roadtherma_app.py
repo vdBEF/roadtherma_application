@@ -47,7 +47,8 @@ import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
 st.markdown('# Roadtherma')
-st.write(os.listdir(path='/tmp'))
+#st.write(os.listdir(path='/tmp'))
+st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
 st.divider()
