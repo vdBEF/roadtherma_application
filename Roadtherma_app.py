@@ -55,6 +55,9 @@ st.write(datetime.datetime.fromtimestamp(os.path.getctime('/tmp/tmp8casadwy')))
 st.write(datetime.datetime.fromtimestamp(os.path.getmtime('/tmp/tmp_vm0fgkb')))
 st.write(datetime.datetime.fromtimestamp(os.path.getmtime('/tmp/tmp8casadwy')))
 
+st.write(os.stat('/tmp/tmp_vm0fgkb'))
+st.write(os.stat('/tmp/tmp8casadwy'))
+
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
 st.divider()
@@ -264,6 +267,8 @@ if st.session_state.count != st.session_state.count_new:
             tmp.write(bytes_data)                      # write data from the uploaded file into it
      
         uploaded_file=tmp.name
+
+        st.write(os.stat(tmp.name))
         print(tmp.name)
         # os.remove(tmp.name)
         #st.write('temp test før')
