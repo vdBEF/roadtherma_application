@@ -281,6 +281,7 @@ if st.session_state.count != st.session_state.count_new:
         os.remove(tmp.name)
         #st.write('temp test efter')
         #st.write(os.listdir(path='/tmp'))
+        print(os.access('/tmp/tmp_vm0fgkb', os.R_OK))
         print(os.open('/tmp/tmp_vm0fgkb'))
         #st.write(os.listdir('\tmp'))
         #st.dataframe(load_data(uploaded_file, config['reader']))
