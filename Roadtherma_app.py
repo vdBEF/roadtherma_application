@@ -935,6 +935,8 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
 
 
 #%%
+print('temp test tilsidst')
+print(os.listdir(path='/tmp'))
 st.divider()
 txt = '''
 *This application is developed for The Danish Road Directorate with the purpose of analysing thermal data obtained during road paving.*  
