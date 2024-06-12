@@ -47,6 +47,7 @@ import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
 st.markdown('# Roadtherma')
+#test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
 st.write(datetime.datetime.fromtimestamp(os.path.getctime('/tmp/tmp_vm0fgkb')))
@@ -57,6 +58,7 @@ st.write(datetime.datetime.fromtimestamp(os.path.getmtime('/tmp/tmp8casadwy')))
 
 st.write(os.stat('/tmp/tmp_vm0fgkb'))
 st.write(os.stat('/tmp/tmp8casadwy'))
+
 
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
@@ -270,11 +272,13 @@ if st.session_state.count != st.session_state.count_new:
 
         st.write(os.stat(tmp.name))
         print(tmp.name)
+        #test
         # os.remove(tmp.name)
         #st.write('temp test før')
         #st.write(os.listdir(path='/tmp'))
         #print(load_data(uploaded_file, config['reader'])
         #st.dataframe(load_data(uploaded_file, config['reader']))
+        
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
         try:
             if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
@@ -292,11 +296,13 @@ if st.session_state.count != st.session_state.count_new:
             
         #st.write(tmp.name)    
         os.remove(tmp.name)
+        #test
         #st.write('temp test efter')
         #st.write(os.listdir(path='/tmp'))
         print(os.access('/tmp/tmp_vm0fgkb', os.R_OK))
-        print(os.open('/tmp/tmp_vm0fgkb'))
+        #print(os.open('/tmp/tmp_vm0fgkb'))
         #st.write(os.listdir('\tmp'))
+        
         #st.dataframe(load_data(uploaded_file, config['reader']))
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None:
