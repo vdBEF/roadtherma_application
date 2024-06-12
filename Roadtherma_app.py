@@ -256,7 +256,7 @@ if st.session_state.count != st.session_state.count_new:
             tmp.write(bytes_data)                      # write data from the uploaded file into it
      
         uploaded_file=tmp.name
-        # print(tmp.name)
+        print(tmp.name)
         # os.remove(tmp.name)
         #st.write(os.listdir('\tmp'))
         #print(load_data(uploaded_file, config['reader'])
