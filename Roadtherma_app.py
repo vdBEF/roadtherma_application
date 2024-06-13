@@ -941,11 +941,11 @@ st.divider()
 txt = '''
 *This application is developed for The Danish Road Directorate with the purpose of analysing thermal data obtained during road paving.*  
 *It builds upon the tool road therma found on https://github.com/roadtools/roadtherma*
-**The program does not save any of the uploaded files after the browser has been closed.**
+
 
 '''
 st.markdown(txt)
-
+st.markdown('**The program does not save any of the uploaded files after the browser has been closed.**')
 with st.expander('Version log'):
     st.markdown('**Version log **')
     st.markdown('*The program is still testing phase*')
