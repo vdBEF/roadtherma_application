@@ -58,7 +58,7 @@ st.markdown('# Roadtherma i TEST, benyt venligst ikke')
 
 #st.write(os.stat('/tmp/tmp_vm0fgkb'))
 #st.write(os.stat('/tmp/tmp8casadwy'))
-
+st.write(st.session_state)
 
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
