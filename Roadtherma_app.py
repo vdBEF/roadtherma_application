@@ -46,11 +46,11 @@ from cli import _iter_segments
 import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
-st.markdown('# Roadtherma i TEST, benyt venligst ikke')
-try:
-    st.write(tmp.name)
-except:
-    st.write('not defeined')
+st.markdown('# Roadtherma')
+#try:
+#   st.write(tmp.name)
+#except:
+#    st.write('not defeined')
 #test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
@@ -62,7 +62,7 @@ except:
 
 #st.write(os.stat('/tmp/tmp_vm0fgkb'))
 #st.write(os.stat('/tmp/tmp8casadwy'))
-st.write(st.session_state)
+#st.write(st.session_state)
 
 st.write('')
 st.markdown('Program for analysing thermal data obtained during road paving')
@@ -281,8 +281,8 @@ if st.session_state.count != st.session_state.count_new:
         # os.remove(tmp.name)
         print('temp test før')
         print(os.listdir(path='/tmp'))
-        st.write('temp test før')
-        st.write(os.listdir(path='/tmp'))
+        #st.write('temp test før')
+        #st.write(os.listdir(path='/tmp'))
         #print(load_data(uploaded_file, config['reader'])
         #st.dataframe(load_data(uploaded_file, config['reader']))
         
@@ -301,15 +301,16 @@ if st.session_state.count != st.session_state.count_new:
         except:
             #print('1')
             os.remove(tmp.name)
-        st.write(st.session_state)    
+            
+        #st.write(st.session_state)    
         #st.write(tmp.name)    
         os.remove(tmp.name)
         
         print('temp test efter')
         print(os.listdir(path='/tmp'))
         #test
-        st.write('temp test efter')
-        st.write(os.listdir(path='/tmp'))
+        #st.write('temp test efter')
+        #st.write(os.listdir(path='/tmp'))
         #print(os.access('/tmp/tmp_vm0fgkb', os.R_OK))
         #print(os.open('/tmp/tmp_vm0fgkb'))
         #st.write(os.listdir('\tmp'))
