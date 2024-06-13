@@ -947,6 +947,6 @@ txt = '''
 st.markdown(txt)
 st.markdown('**The program does not save any of the uploaded files after the browser has been closed.**')
 with st.expander('Version log'):
-    st.markdown('**Version log **')
+    #st.markdown('**Version log**')
     st.markdown('*The program is still testing phase*')
     st.markdown(versions_log_txt)
