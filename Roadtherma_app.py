@@ -47,7 +47,10 @@ import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
 st.markdown('# Roadtherma i TEST, benyt venligst ikke')
-print(tmp.name)
+try:
+    st.write(tmp.name)
+except:
+    st.write('not defeined')
 #test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
