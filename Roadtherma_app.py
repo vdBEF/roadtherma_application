@@ -46,7 +46,7 @@ from cli import _iter_segments
 import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
-st.markdown('# Roadtherma I TEST, benyt venligst ikke 13/06-24')
+st.markdown('# Roadtherma')
 #test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
