@@ -46,7 +46,7 @@ from cli import _iter_segments
 import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
-st.markdown('# Roadtherma')
+st.markdown('# Roadtherma I TEST, benyt venligst ikke 13/06-24')
 #test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
@@ -293,10 +293,12 @@ if st.session_state.count != st.session_state.count_new:
         #printer den uploaded dataframe 
         # st.dataframe(st.session_state['uploaded_data'])
         except:
-            os.remove(tmp.name)
+            print('1')
+            #os.remove(tmp.name)
             
         #st.write(tmp.name)    
-        os.remove(tmp.name)
+        #os.remove(tmp.name)
+        
         print('temp test efter')
         print(os.listdir(path='/tmp'))
         #test
