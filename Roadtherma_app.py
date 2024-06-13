@@ -46,7 +46,7 @@ from cli import _iter_segments
 import nrn_functions #funktioner lavet primært til streamlit app
 # st.set_page_config(page_title=None, layout="wide")
 
-st.markdown('# Roadtherma')
+st.markdown('# Roadtherma i TEST, benyt venligst ikke')
 #test
 #st.write(os.listdir(path='/tmp'))
 #st.write(os.path.getctime('/tmp/tmp_vm0fgkb'))
@@ -269,7 +269,7 @@ if st.session_state.count != st.session_state.count_new:
             tmp.write(bytes_data)                      # write data from the uploaded file into it
      
         uploaded_file=tmp.name
-
+        st.write(st.session_state)
         
         print(tmp.name)
         #test
