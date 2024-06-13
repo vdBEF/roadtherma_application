@@ -269,7 +269,7 @@ if st.session_state.count != st.session_state.count_new:
             tmp.write(bytes_data)                      # write data from the uploaded file into it
      
         uploaded_file=tmp.name
-        st.write(st.session_state)
+        
         
         print(tmp.name)
         #test
@@ -277,8 +277,8 @@ if st.session_state.count != st.session_state.count_new:
         # os.remove(tmp.name)
         print('temp test før')
         print(os.listdir(path='/tmp'))
-        #st.write('temp test før')
-        #st.write(os.listdir(path='/tmp'))
+        st.write('temp test før')
+        st.write(os.listdir(path='/tmp'))
         #print(load_data(uploaded_file, config['reader'])
         #st.dataframe(load_data(uploaded_file, config['reader']))
         
@@ -297,15 +297,15 @@ if st.session_state.count != st.session_state.count_new:
         except:
             #print('1')
             os.remove(tmp.name)
-            
+        st.write(st.session_state)    
         #st.write(tmp.name)    
         os.remove(tmp.name)
         
         print('temp test efter')
         print(os.listdir(path='/tmp'))
         #test
-        #st.write('temp test efter')
-        #st.write(os.listdir(path='/tmp'))
+        st.write('temp test efter')
+        st.write(os.listdir(path='/tmp'))
         #print(os.access('/tmp/tmp_vm0fgkb', os.R_OK))
         #print(os.open('/tmp/tmp_vm0fgkb'))
         #st.write(os.listdir('\tmp'))
