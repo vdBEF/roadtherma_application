@@ -307,6 +307,7 @@ if st.session_state.count != st.session_state.count_new:
         try:
             os.remove(tmp.name)
         except:
+            st.session_state['uploaded_data']=None
             st.error('There was chosen a wrong camera type or the file format could not be loaded') 
             
         print('temp test efter')
