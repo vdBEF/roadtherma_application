@@ -304,8 +304,11 @@ if st.session_state.count != st.session_state.count_new:
             
         #st.write(st.session_state)    
         #st.write(tmp.name)    
-        os.remove(tmp.name)
-        
+        try:
+            os.remove(tmp.name)
+        except:
+            st.error('There was chosen a wrong camera type or the file format could not be loaded') 
+            
         print('temp test efter')
         print(os.listdir(path='/tmp'))
         #test
