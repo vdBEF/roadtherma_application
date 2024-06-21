@@ -260,7 +260,7 @@ def summary_as_MAP(temperatures_trimmed, road_pixels, moving_average_pixels, fil
                                'Road ID':a[5], 'Date':a[1], 'Device':a[3],
                                'Number of Pavers':a[7], 'Position of Paver':a[8],
                                'Road segment':a[6]}, index=range(0,1) )
-    summary_df['Moving Average Results [%]'] = np.round(ratio*100,1)
+    summary_df['Moving Average Results [%]'] = ratio*100
     summary_df['10 degrees gap'] = Maks3.loc['index']
     summary_df['Percent with 10 degrees gap'] = np.round(Maks3.loc['Percentage [] 10C gap'],2) 
     summary_df['20 degrees gap'] = Maks.loc['index']
