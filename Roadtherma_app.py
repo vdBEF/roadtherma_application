@@ -637,6 +637,14 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
     statistics_dataframe['20 degrees gap'][0]=str(statistics_dataframe['20 degrees gap'][0])
     statistics_dataframe['30 degrees gap'][0]=str(statistics_dataframe['30 degrees gap'][0])
 
+    print(statistics_dataframe['Moving Average Results [%]'])
+    statistics_dataframe['Moving Average Results [%]']=np.round(statistics_dataframe['Moving Average Results [%]'],3)
+    print(statistics_dataframe['Moving Average Results [%]'])
+
+
+
+
+
 # elif road_pixels ==None:
 #     st.write('')
 # elif road_pixels ==None and uploaded_file == None :
