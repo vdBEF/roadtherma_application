@@ -124,9 +124,11 @@ def _calculate_lane_seperators(pixels, threshold):
 
     # Find the first longitudinal mean that is above threshold starting from each edge
     above_thresh = (mean_temp > threshold).astype('int')
-    start = len(mean_temp) - len(np.trim_zeros(above_thresh, 'f'))
-    end = - (len(mean_temp) - len(np.trim_zeros(above_thresh, 'b')))
-
+    #start = len(mean_temp) - len(np.trim_zeros(above_thresh, 'f')) #JLB 03/07 - remove cold lane detection
+    #end = - (len(mean_temp) - len(np.trim_zeros(above_thresh, 'b'))) #JLB 03/07 - remove cold lane detection
+    start=0 #JLB 03/07 - remove cold lane detection
+    end=len(mean_temp) #JLB 03/07 - remove cold lane detection
+    
     # If there are longitudinal means below temperature threshold in the middle
     # it is probably because there is a shift in lanes.
     below_thresh = ~ above_thresh.astype('bool')
@@ -137,7 +139,7 @@ def _calculate_lane_seperators(pixels, threshold):
         # Calculate splitting point between lanes
         (midpoint, ) = np.where(mean_temp[start:end] == min(mean_temp[start:end]))
         midpoint = midpoint[0] + start
-        return (start, midpoint, end)
+        return None #(start, midpoint, end) #JLB 03/07 - remove cold lane detection
     return None
 
 
