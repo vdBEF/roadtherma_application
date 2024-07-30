@@ -122,7 +122,11 @@ def _detect_diagonal_gradients_right(idx, offsets, temperatures, gradient_pixels
     temperature_slice = temperatures[idx, start:end]
     temperature_slice_next = temperatures[idx + 1, next_start:next_end]
 
-    (indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    #(indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    try:
+        (indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    except:
+        st.error('The calculation could not be done. Try changing roadwidth_threshold or trimming.')
 
     gradient_pixels[idx, start:end][indices] = 1
     gradient_pixels[idx + 1, next_start:next_end][indices] = 1
@@ -166,7 +170,11 @@ def _detect_diagonal_gradients_left(idx, offsets, temperatures, gradient_pixels,
     temperature_slice = temperatures[idx, start:end]
     temperature_slice_next = temperatures[idx + 1, next_start:next_end]
 
-    (indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    #(indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    try:
+        (indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+    except:
+        st.error('The calculation could not be done. Try changing roadwidth_threshold or trimming.')
     gradient_pixels[idx, start:end][indices] = 1
     gradient_pixels[idx + 1, next_start:next_end][indices] = 1
 
@@ -184,6 +192,8 @@ def _detect_longitudinal_gradients(idx, offsets, temperatures, gradient_pixels, 
     temperature_slice_next = temperatures[idx + 1, start:end]
 
     (indices, ) = np.where(np.abs(temperature_slice - temperature_slice_next) > tolerance)
+
+    
     indices += start
     gradient_pixels[idx, indices] = 1
     gradient_pixels[idx + 1, indices] = 1
