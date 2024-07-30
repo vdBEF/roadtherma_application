@@ -208,3 +208,47 @@ def interpolate_roller_pixels(temperature_pixels, roller_pixels, road_pixels):
     # values_interpolate = griddata(points, values, points_interpolate, method='linear')
     # temperature_pixels[points_interpolate] = 200.0 # values_interpolate
     temperature_pixels[points_interpolate] = np.mean(temperature_pixels[points])
+
+
+
+def trimguess(temperatures, config):    
+
+    autotrim1=1
+    if autotrim1==1:
+
+        TEMP=temperatures[temperatures>=config['roadwidth_threshold']]
+# Temp1=TEMP.dropna(how='all',axis=1)
+        Temp1=TEMP
+# print(Temp1.mean())
+        if config['pixel_width']==0.03:
+            Limit=100
+        else:
+            Limit=250
+        print(((Temp1.count())))
+        print(((Temp1.count()>=Limit)))
+        n=0
+        for i in range(np.size(Temp1,1)-1):
+    # n=n+1 
+            # print(i)
+            if (Temp1.count()>=Limit)[i]==True:
+                break
+            n=n+1
+        print('n=',n)
+        k=n
+        print(range(np.size(Temp1,1)-n-1))
+        for i in range(np.size(Temp1,1)-n-1):
+            # print(i+n)
+            if (Temp1.count()>=Limit)[i+n]==False:
+                break
+            k=k+1
+        print('k=',k)     
+        # o=k
+              
+        if config['pixel_width']==0.25 or config['pixel_width']==0.03 :
+            StartTrim=(n-1)*config['pixel_width']
+            EndTrim=(k+1)*config['pixel_width']        
+        print('StartTrim=',StartTrim)
+        print('EndTrim=',EndTrim)
+        
+        return StartTrim, EndTrim
+
