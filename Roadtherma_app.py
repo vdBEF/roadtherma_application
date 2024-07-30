@@ -39,7 +39,7 @@ from utils import split_temperature_data
 from export import temperature_to_csv, detections_to_csv, temperature_mean_to_csv, clusters_to_csv
 from plotting import plot_statistics, plot_detections, plot_cleaning_results, save_figures
 from clusters import create_cluster_dataframe
-from road_identification import clean_data, identify_roller_pixels, interpolate_roller_pixels
+from road_identification import clean_data, identify_roller_pixels, interpolate_roller_pixels, trimguess
 from detections import detect_high_gradient_pixels, detect_temperatures_below_moving_average
 from readers import readers
 from cli import _iter_segments
@@ -72,8 +72,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.7 - JLB1 07-06-2024 - Ready for external testing, corrected reader and interface improvements.' #det der skrives i configuration filen
+current_version ='version 0.8 - JLB1 24-07-2024 - Initial trim guess and interface improvements.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.8 - JLB1 24-07-2024 - Initial trim guess and interface improvements.
+Small changes has been made. There has been made a initial trim guess based on the roadwidth_threshold and pixel_width.
 
 version 0.7 - JLB1 07-06-2024 - Ready for external testing, corrected reader and interface improvements.
 Small layout and interface changes have been made. The voegele reader has also been corrected.
@@ -412,13 +415,20 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
         if config['pixel_width'] == 0.03: config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8  
         
     # st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
+
+    #Her deles dataframen ind i en df med temperatur data og en med resten af kolonnerne.
+    temperatures, metadata = split_temperature_data(df)
+    # st.write(temperatures)#plot af dataframe
+    
+    StartTrim, EndTrim=trimguess(temperatures, config) # trim guess
+    
     st.write('The parameters used for trimming are specified here:')
     with st.form(key='columns_in_form'):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            config['manual_trim_transversal_start'] = st.number_input('manual_trim_transversal_start', value=2.5)
+            config['manual_trim_transversal_start'] = st.number_input('manual_trim_transversal_start', value=StartTrim)
         with c2:
-            config['manual_trim_transversal_end'] = st.number_input('manual_trim_transversal_end', value=9.5)
+            config['manual_trim_transversal_end'] = st.number_input('manual_trim_transversal_end', value=EndTrim)
         with c3:
             config['manual_trim_longitudinal_start'] = st.number_input('manual_trim_longitudinal_start', value=0)
         with c4:
@@ -427,7 +437,7 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     
 
     #Her deles dataframen ind i en df med temperatur data og en med resten af kolonnerne.
-    temperatures, metadata = split_temperature_data(df)
+    #temperatures, metadata = split_temperature_data(df)
     # st.write(temperatures)#plot af dataframe
     
     print(config['pixel_width'])
