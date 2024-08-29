@@ -426,13 +426,13 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     with st.form(key='columns_in_form'):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            config['manual_trim_transversal_start'] = st.number_input('manual_trim_transversal_start', value=StartTrim)
+            config['manual_trim_transversal_start'] = st.number_input('manual_trim_transversal_start', value=StartTrim,step=1.0,min_value=0.0,max_value=20.0)
         with c2:
-            config['manual_trim_transversal_end'] = st.number_input('manual_trim_transversal_end', value=EndTrim)
+            config['manual_trim_transversal_end'] = st.number_input('manual_trim_transversal_end', value=EndTrim,step=1.0,min_value=0.0,max_value=20.0)
         with c3:
-            config['manual_trim_longitudinal_start'] = st.number_input('manual_trim_longitudinal_start', value=0)
+            config['manual_trim_longitudinal_start'] = st.number_input('manual_trim_longitudinal_start', value=0.0,step=1.0,min_value=0.0,max_value=9999.9)
         with c4:
-            config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=np.ceil(df.distance.iloc[-1]))
+            config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=np.ceil(df.distance.iloc[-1]),step=1.0,min_value=0.0,max_value=9999.9)
         submitButton = st.form_submit_button(label = 'Calculate') #når denne trykkes sendes de nye værdier til programmet
     
 
