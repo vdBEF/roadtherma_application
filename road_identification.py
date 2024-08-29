@@ -216,14 +216,16 @@ def trimguess(temperatures, config):
     autotrim1=1
     if autotrim1==1:
 
-        TEMP=temperatures[temperatures>=config['roadwidth_threshold']]
+        #TEMP=temperatures[temperatures>=config['roadwidth_threshold']]
+        TEMP=temperatures[temperatures>=100]
 # Temp1=TEMP.dropna(how='all',axis=1)
         Temp1=TEMP
 # print(Temp1.mean())
         if config['pixel_width']==0.03:
             Limit=100
         else:
-            Limit=250
+            #Limit=250
+            Limit=200
         print(((Temp1.count())))
         print(((Temp1.count()>=Limit)))
         n=0
