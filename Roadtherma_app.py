@@ -559,7 +559,7 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None :
     
 elif uploaded_file == None :
     # st.write(':blue[There is no uploaded file]')
-    st.warning('Analysing is not possible because there is no uploaded file')
+    st.warning('Analysis is not available because a file has not been uploaded')
 elif uploaded_file != None and config['reader'] == None  :        
     # st.write(':blue[Choose a camera type first]')
     st.warning('Choose a camera type first before analysing')
