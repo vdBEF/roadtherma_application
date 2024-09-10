@@ -237,7 +237,7 @@ reader_list = ['Voegele', 'TF','Moba']
 #                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
                
 with col1:
-    st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with what type and append the file*] ')
+    st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with what type of camera and attach the file*] ')
     config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
                                     on_change=counter_func )
     # config['reader'] = st.selectbox('Choose which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
