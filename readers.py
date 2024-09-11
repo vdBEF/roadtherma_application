@@ -128,8 +128,13 @@ def _read_voegele_1(filename):
                 df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S")
         elif col in set(temperatures_voegele) | {'distance', 'latitude', 'longitude'}:
             
-            df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
+            #df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
             # df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+            try: 
+                df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
+            except:
+                df.replace('""',np.nan,inplace=True)
+                df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
     # print(df)
     # if len(dfT.loc[0][0])==31:
     #     try:
