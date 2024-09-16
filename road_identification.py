@@ -245,14 +245,25 @@ def trimguess(temperatures, config):
             k=k+1
         print('k=',k)     
         # o=k
-              
-        if config['pixel_width']==0.25 or config['pixel_width']==0.03 :
+        if config['pixel_width']==0.25: #or config['pixel_width']==0.03 :
             StartTrim=(n-1)*config['pixel_width']
             if StartTrim<0:
                 StartTrim=0.0
-            EndTrim=(k+1)*config['pixel_width']        
+            EndTrim=(k+1)*config['pixel_width']
+        elif config['pixel_width']==0.03:
+            StartTrim=(n-4)*config['pixel_width']
+            EndTrim=(k+4)*config['pixel_width']
+            if StartTrim<0:
+                StartTrim=0.0
         print('StartTrim=',StartTrim)
-        print('EndTrim=',EndTrim)
+        print('EndTrim=',EndTrim)      
+        #if config['pixel_width']==0.25 or config['pixel_width']==0.03 :
+            #StartTrim=(n-1)*config['pixel_width']
+            #if StartTrim<0:
+                #StartTrim=0.0
+            #EndTrim=(k+1)*config['pixel_width']        
+        #print('StartTrim=',StartTrim)
+        #print('EndTrim=',EndTrim)
         
         return StartTrim, EndTrim
 
