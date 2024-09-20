@@ -251,8 +251,8 @@ def trimguess(temperatures, config):
                 StartTrim=0.0
             EndTrim=(k+1)*config['pixel_width']
         elif config['pixel_width']==0.03:
-            StartTrim=(n-4)*config['pixel_width']
-            EndTrim=(k+4)*config['pixel_width']
+            StartTrim=round((n-4)*config['pixel_width'],2)
+            EndTrim=round((k+4)*config['pixel_width'],2)
             if StartTrim<0:
                 StartTrim=0.0
         print('StartTrim=',StartTrim)
