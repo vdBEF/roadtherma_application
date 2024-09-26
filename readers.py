@@ -317,7 +317,10 @@ def _read_TF_time(filename):
         df = pd.read_csv(filename, skiprows=7, delimiter=';', names=columns,thousands=',',decimal='.')
      
     print(df)  
-    df['time']=[x.replace(' ','') for x in df.time]
+    try:
+        df['time']=[x.replace(' ','') for x in df.time]
+    except:
+        print('fejl time')
     df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')
 
 #del df['T280']
