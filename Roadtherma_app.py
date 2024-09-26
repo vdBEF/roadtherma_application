@@ -355,7 +355,7 @@ elif st.session_state.count == st.session_state.count_new:
     
    
 df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten af koden. 
-print(df)
+#print(df)
 
 #Removes the pixel width value if the reader is not chosen
 if config['reader'] == None:
