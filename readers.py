@@ -319,9 +319,11 @@ def _read_TF_time(filename):
     print(df)  
     try:
         df['time']=[x.replace(' ','') for x in df.time]
+        df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')
     except:
         print('fejl time')
-    df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')
+    #df['time']=[x.replace(' ','') for x in df.time]    
+    #df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')
     print(df) 
 #del df['T280']
 
