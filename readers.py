@@ -184,11 +184,42 @@ def _read_voegele_2(filename):
         for col in dfT.columns:
             dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
     print(dfT)
-    try:            
-        df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
-    except:
-        df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252')
-    print(df)
+
+    if bool(re.search(',',str(dfT.loc[0][1])))==True:
+        try:            
+            df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',quoting=csv.QUOTE_NONE)
+            print(df)
+            f=1
+        except:
+            df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252',quoting=csv.QUOTE_NONE) #encoding='cp1252'
+            print(df)
+            f=1
+        for col in df.columns:
+            if col in {'distance', 'latitude', 'longitude'}|set(temperatures_voegele):
+               try: 
+                   df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+                   df[col] = df[col].astype('str').apply(lambda x:x.replace(',','.')).astype(float)
+               except:
+                   df.replace('""',np.nan,inplace=True)
+                   df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+                   df[col] = df[col].astype('str').apply(lambda x:x.replace(',','.')).astype(float)
+            if col in {'time'}:
+               try: 
+                   df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+                   
+               except:
+                   df.replace('""',np.nan,inplace=True)
+                   df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+
+
+
+
+    if f!=1:
+        try:            
+            df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',')
+        except:
+            df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252')
+        print(df)
     if len(dfT.loc[0][0])==31:
         try:
             df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
