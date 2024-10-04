@@ -72,8 +72,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.8 - JLB1 24-07-2024 - Initial trim guess and interface improvements.' #det der skrives i configuration filen
+current_version ='version 0.9 - JLB1 04-10-2024 -  Now works with python version 3.11.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.9 - JLB1 04-10-2024 - Now works with python version 3.11.
+Small changes has been made.
 
 version 0.8 - JLB1 24-07-2024 - Initial trim guess and interface improvements.
 Small changes has been made. There has been made a initial trim guess based on the roadwidth_threshold and pixel_width.
@@ -134,7 +137,7 @@ config['Date of analysis'] = date.today().strftime('%Y-%m-%d')
 config['version'] = current_version
 config_default_values = {'pixel_width':0.25, 'roadwidth_threshold':50, 'autotrim_temperature':40, 'lane_threshold': 160,
                          'roller_detect_enabled':False, 'roller_detect_temperature':50, 'roller_detect_interpolation':False,
-                         'gradient_enabled':True, 'gradient_tolerance':10, 'plotting_segments':1, 'show_plots':True,
+                         'gradient_enabled':False, 'gradient_tolerance':10, 'plotting_segments':1, 'show_plots':True,
                          'save_figures':True, 'write_csv':True,'autotrim_enabled':False, 'autotrim_percentage':0.2,
                          'roadwidth_adjust_left': 1, 'roadwidth_adjust_right':1, 'lane_enabled':True,'moving_average_enabled':True,
                          'moving_average_window':100, 'moving_average_percent': 90, 'gradient_statistics_enabled':False,
