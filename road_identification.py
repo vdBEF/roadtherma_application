@@ -232,7 +232,7 @@ def trimguess(temperatures, config):
         for i in range(np.size(Temp1,1)-1):
     # n=n+1 
             # print(i)
-            if (Temp1.count()>=Limit)[i]==True:
+            if (Temp1.count()>=Limit).iloc[i]==True: # indsat iloc 01102024
                 break
             n=n+1
         print('n=',n)
@@ -240,7 +240,7 @@ def trimguess(temperatures, config):
         print(range(np.size(Temp1,1)-n-1))
         for i in range(np.size(Temp1,1)-n-1):
             # print(i+n)
-            if (Temp1.count()>=Limit)[i+n]==False:
+            if (Temp1.count()>=Limit).iloc[i+n]==False: # indsat iloc 01102024
                 break
             k=k+1
         print('k=',k)     
