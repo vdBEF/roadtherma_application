@@ -150,7 +150,8 @@ st.sidebar.markdown('# configuration options')
 # with open('configuration_values.json') as f: #hvis en fil skal åbnes direkte og ikke igennem streamlit
 #     config_values = json.load(f)#hvis en fil skal åbnes direkte og ikke igennem streamlit
     
-config_values_available = st.sidebar.checkbox('Load configuration values from file')
+#config_values_available = st.sidebar.checkbox('Load configuration values from file')
+config_values_available = 0
 if config_values_available:
     config_values_path = st.sidebar.file_uploader('Upload file with configuration values. OBS: right now this only work with json files created in this program.') 
     if config_values_path is not None:
