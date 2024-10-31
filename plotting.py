@@ -150,6 +150,7 @@ def _categorical_heatmap(ax, pixels, distance, pixel_width, categories):
     mat = ax.imshow(
         pixels,
         aspect='auto',
+        interpolation='none',
         vmin=np.min(pixels) - .5,
         vmax=np.max(pixels) + .5,
         cmap=ListedColormap(colors[:len(categories)]),
@@ -165,6 +166,7 @@ def _temperature_heatmap(ax, pixels, distance, pixel_width):
     """Make a heatmap of the temperature columns in the dataframe."""
     mat = ax.imshow(
         pixels,
+        interpolation='none',
         aspect="auto",
         cmap='RdYlGn_r',
         extent=_create_extent(distance, pixels, pixel_width)
