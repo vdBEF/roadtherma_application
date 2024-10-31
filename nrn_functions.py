@@ -28,6 +28,7 @@ def heatmaps_temperature_pixels(ax, pixels, distance, pixel_width, include_color
         pixels,
         aspect="auto",
         cmap='RdYlGn_r',
+        interpolation='none',
         extent=(0, pixels.shape[1] * pixel_width, distance.iloc[-1], distance.iloc[0]) #floats (left, right, bottom, top), (0, pixels.shape[1] * pixel_width, distance.iloc[-1], distance.iloc[0])
     )
     if include_colorbar==True:
@@ -50,6 +51,7 @@ def heatmap_identified_road(ax, pixel_category, distance, pixel_width, categorie
     mat = ax.imshow(
         pixel_category,
         aspect='auto',
+        interpolation='none',
         vmin=np.min(pixel_category) - .5, 
         vmax=np.max(pixel_category) + .5,
         cmap=ListedColormap(colors[:len(categories)]),
