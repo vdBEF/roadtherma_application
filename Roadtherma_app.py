@@ -31,7 +31,7 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 import datetime
-
+import plotly.express as px
 
 # from config import ConfigState
 from data import load_data, create_road_pixels, create_trimming_result_pixels
