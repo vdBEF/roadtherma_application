@@ -34,7 +34,7 @@ import datetime
 import plotly.express as px
 
 # from config import ConfigState
-from data import load_data, create_road_pixels, create_trimming_result_pixels
+from data import load_data, create_road_pixels, create_trimming_result_pixels,create_detect_result_pixels
 from utils import split_temperature_data
 from export import temperature_to_csv, detections_to_csv, temperature_mean_to_csv, clusters_to_csv
 from plotting import plot_statistics, plot_detections, plot_cleaning_results, save_figures
