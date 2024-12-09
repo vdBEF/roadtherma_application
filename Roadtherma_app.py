@@ -466,6 +466,25 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     ax2.set_xlabel('Road width [m]')
     plt.tight_layout()
     st.pyplot(fig_heatmaps)
+    # Interactive plotly plot of the trimmed data 09122024
+    st.toggle('Press to get interactive plot of trimmed data', value=False, key='plot_trim')
+    if st.session_state.plot_trim == True:
+    mat = px.imshow(                
+        trimmed_data_df,
+        aspect="auto",
+        labels=dict(x='Road width [m]',
+                    y='Distance [m]',
+                    color="Temp [C]"),
+                    x=np.arange(0,trimmed_data_df.shape[1]*config['pixel_width'],config['pixel_width']),
+                    y=metadata.distance[trim_result[2]:trim_result[3]],
+        color_continuous_scale='RdYlGn_r',
+        width=250,
+        height=(250*3.5)
+    )
+    st.plotly_chart(mat, use_container_width=True)
+
+
+    
     #---- slut på plot ---- 
     
     st.write('Based on the temperatures and chosen trimming values, the paved road section is identified.')
@@ -495,6 +514,23 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
         nrn_functions.heatmap_identified_road(ax1, pixel_category1, metadata.distance, config['pixel_width'], categories=['non-road', 'road'])
         ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
         st.pyplot(fig_heatmap1)
+        # interactive plotly plot of the identified road 09122024
+        st.toggle('Press to get interactive plot of the identified road', value=False, key='plot_road_detection')
+        if st.session_state.plot_road_detection == True:
+            colors = ["dimgray", "firebrick"]
+            mat = px.imshow(pixel_category1,
+                labels=dict(x='Road width [m]',
+                        y='Distance [m]'),
+                        x=np.arange(0,pixel_category1.shape[1]*config['pixel_width'],config['pixel_width']),
+                        y=metadata.distance,
+                aspect="auto",
+                color_continuous_scale=colors,
+                width=250,
+                height=250*3.5
+                                )
+            st.plotly_chart(mat, use_container_width=True)
+
+
 #--------
 elif uploaded_file == None :
     # trim=0
@@ -550,6 +586,28 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None :
         plot_detections(k, figures, **kwargs)
     
     st.pyplot(figures['moving_average']) #plot af moving average resultaterne
+
+    st.toggle('Press to get interactive plot of the moving average detections results', value=False, key='plot_MA')
+    if st.session_state.plot_MA == True:
+            pixel_category = create_detect_result_pixels(
+                temperatures_trimmed.values,
+                road_pixels,
+                moving_average_pixels)
+            colors = ["dimgray", "firebrick", "springgreen"]
+            mat = px.imshow(
+                pixel_category,
+                aspect="auto",
+                labels=dict(x='Road width [m]',
+                            y='Distance [m]'),
+                            x=np.arange(0,pixel_category.shape[1]*config['pixel_width'],config['pixel_width']),
+                            y=metadata.distance,
+                color_continuous_scale=colors,
+                width=250,
+                height=250*3.5
+            )
+            st.plotly_chart(mat, use_container_width=True)
+
+    
     if config['gradient_enabled']: st.pyplot(figures['gradient'])
 
 # elif road_pixels ==None:
