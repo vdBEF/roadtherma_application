@@ -599,12 +599,12 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None :
                 aspect="auto",
                 labels=dict(x='Road width [m]',
                             y='Distance [m]'),
-                            x=np.arange(0,pixel_category.shape[1]*config['pixel_width'],config['pixel_width']),
+                            x=np.arange(0,(pixel_category.shape[1]-1)*config['pixel_width'],config['pixel_width']), # Remove -1 after the code has been corrected(not removing the last line every time)
                             y=metadata.distance,
                 color_continuous_scale=colors,
                 width=250,
                 height=250*3.5
-            )
+                )
             st.plotly_chart(mat, use_container_width=True)
 
     
