@@ -599,8 +599,8 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None :
                 aspect="auto",
                 labels=dict(x='Road width [m]',
                             y='Distance [m]'),
-                            x=np.arange(0,(pixel_category.shape[1])*config['pixel_width'],config['pixel_width']), # Remove -1 after the code has been corrected(not removing the last line every time)
-                            y=metadata.distance[0:len(metadata.distance)-1] # Remove [0:len(metadata.distance)-1] after the code has been corrected(not removing the last line every time)
+                            x=np.arange(0,(pixel_category.shape[1])*config['pixel_width'],config['pixel_width']), 
+                            y=metadata.distance[0:len(metadata.distance)-1], # Remove [0:len(metadata.distance)-1] after the code has been corrected(not removing the last line every time)
                 color_continuous_scale=colors,
                 width=250,
                 height=250*3.5
