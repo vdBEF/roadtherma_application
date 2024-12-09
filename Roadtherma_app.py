@@ -469,19 +469,19 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     # Interactive plotly plot of the trimmed data 09122024
     st.toggle('Press to get interactive plot of trimmed data', value=False, key='plot_trim')
     if st.session_state.plot_trim == True:
-    mat = px.imshow(                
-        trimmed_data_df,
-        aspect="auto",
-        labels=dict(x='Road width [m]',
+        mat = px.imshow(                
+            trimmed_data_df,
+            aspect="auto",
+            labels=dict(x='Road width [m]',
                     y='Distance [m]',
                     color="Temp [C]"),
                     x=np.arange(0,trimmed_data_df.shape[1]*config['pixel_width'],config['pixel_width']),
                     y=metadata.distance[trim_result[2]:trim_result[3]],
-        color_continuous_scale='RdYlGn_r',
-        width=250,
-        height=(250*3.5)
-    )
-    st.plotly_chart(mat, use_container_width=True)
+            color_continuous_scale='RdYlGn_r',
+            width=250,
+            height=(250*3.5)
+        )
+        st.plotly_chart(mat, use_container_width=True)
 
 
     
