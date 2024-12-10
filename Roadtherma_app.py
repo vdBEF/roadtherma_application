@@ -470,7 +470,7 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     plt.tight_layout()
     st.pyplot(fig_heatmaps)
     # Interactive plotly plot of the trimmed data 09122024
-    st.toggle('Press to get interactive plot of trimmed data', value=False, key='plot_trim')
+    st.toggle('Press to get interactive plot of the trimmed data', value=False, key='plot_trim')
     if st.session_state.plot_trim == True:
         mat = px.imshow(                
             trimmed_data_df,
