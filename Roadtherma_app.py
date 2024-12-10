@@ -72,8 +72,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.9 - JLB1 04-10-2024 -  Now works with python version 3.11.' #det der skrives i configuration filen
+current_version ='version 0.91 - JLB1 10-12-2024 - Plotly integration and moved roadwidth_threshold.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.91 - JLB1 10-12-2024 - Plotly integration and moved roadwidth_threshold
+Created toggles that plot interactive plots. Useful for zooming in. Moved "roadwidth_threshold to the trimming section, because it is used there and now it reset when a new file i uploaded
 
 version 0.9 - JLB1 04-10-2024 - Now works with python version 3.11.
 Small changes has been made.
@@ -171,7 +174,7 @@ if config_values_available:
 # if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
 
 
-config['roadwidth_threshold'] = st.sidebar.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=config_default_values['roadwidth_threshold'], step=1) #roadwidth_threshold: 50 # Threshold temperature used when estimating the road width.
+#config['roadwidth_threshold'] = st.sidebar.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=config_default_values['roadwidth_threshold'], step=1) #roadwidth_threshold: 50 # Threshold temperature used when estimating the road width.
 config['lane_threshold'] = st.sidebar.number_input('Threshold temperature used when detecting the paving lane (lane_threshold)', value=config_default_values['lane_threshold'] , step=1)#     lane_threshold: 150.0      # Threshold temperature used when detecting the paving lane.
 config['gradient_enabled'] = st.sidebar.toggle('gradient_enabled', value=config_default_values['gradient_enabled'] )#gradient_enabled: True             # Whether or not to make detections using the "gradient" method.
 config['gradient_tolerance'] = st.sidebar.number_input('gradient_tolerance', value=config_default_values['gradient_tolerance'] , step=1)# gradient_tolerance: 10.0 # Tolerance on the temperature difference during temperature gradient detection.    
@@ -407,7 +410,7 @@ st.write('Because of the chosen camera type the pixel width [m] is: ', config['p
 if run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
 
     # st.session_state['info_data']=''
-    
+    config['roadwidth_threshold'] = st.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=float(config_default_values['roadwidth_threshold']),step=1.0,min_value=0.0,max_value=200.0)
     # trim=1    
     # # A manual method of choosing pixel width if the standard method is no working.
     st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
