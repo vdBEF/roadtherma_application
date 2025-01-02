@@ -262,7 +262,7 @@ def _read_TF_new(filename):
     temperatures = ['T{}'.format(n) for n in range(281)]
     # print(temperatures)
     columns = ['distance'] + ['time'] + ['latitude'] + ['longitude'] + temperatures
-    df = pd.read_csv(filename, skiprows=7, delimiter=',', names=columns)
+    df = pd.read_csv(filename, skiprows=5, delimiter=',', names=columns)
     df['time'] = [x[:-6] for x in df.time]
     df['time'] = pd.to_datetime(df.time, format=' %Y-%m-%dT%H:%M:%S')
     del df['T280']
@@ -312,9 +312,9 @@ def _read_TF_time(filename):
 
     if bool(re.search(',',str(T8_line)))==True:
         
-        df = pd.read_csv(filename, skiprows=7, delimiter=';', names=columns,thousands='.',decimal=',')
+        df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands='.',decimal=',')
     else:
-        df = pd.read_csv(filename, skiprows=7, delimiter=';', names=columns,thousands=',',decimal='.')
+        df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands=',',decimal='.')
      
     print(df)  
     try:
