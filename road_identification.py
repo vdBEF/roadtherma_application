@@ -53,7 +53,7 @@ def crop_temperature_data(temperatures, metadata, config):
 
     column_start, column_end = _interval2indices(transversal, trans_start, trans_end)
     row_start, row_end = _interval2indices(metadata.distance.values, longi_start, longi_end)
-    return column_start, column_end, row_start, row_end
+    return column_start, column_end, row_start, row_end+1 #2025-02-01 - JLB - resolves the last line is removed problem
 
 
 def _interval2indices(distance, start, end):
