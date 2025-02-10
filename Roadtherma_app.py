@@ -575,12 +575,12 @@ st.write('When the trimming is ok, start the analysis by checking the box below.
 #run_script_checkbox = st.checkbox('Start the analysis')
 # trim=None
 if run_trimming_checkbox==False: # 
-    run_script_checkbox = st.toggle('Start the analysis',disabled=True)
+    run_script_checkbox = st.checkbox('Start the analysis',disabled=True)
 # elif rs==1:
 #     run_script_checkbox = st.toggle('Start the analysis')
     
 else:    
-    run_script_checkbox = st.toggle('Start the analysis')#, on_change=st.session_state.CS)
+    run_script_checkbox = st.checkbox('Start the analysis')#, on_change=st.session_state.CS)
 
 
 #%% Herunder køres programmet baseret på trimningen ovenover 
