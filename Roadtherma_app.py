@@ -748,7 +748,8 @@ elif run_script_checkbox and uploaded_file != None and config['reader'] != None:
     print(statistics_dataframe['Moving Average Results [%]'])
 
 
-
+    statistics_dataframe['Roadpixels']=number_1
+    statistics_dataframe['MA Roadpixels']=number_2
 
 
 # elif road_pixels ==None:
