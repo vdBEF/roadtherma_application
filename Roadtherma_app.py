@@ -318,6 +318,7 @@ if st.session_state.count != st.session_state.count_new:
             os.remove(tmp.name)
         except:
             st.session_state['uploaded_data']=None
+            uploaded_file = None
             st.error('There was chosen a wrong camera type or the file format could not be loaded') 
             
         print('temp test efter')
@@ -397,18 +398,32 @@ st.divider()
 
 figures = {}
 
+if 'CS' not in st.session_state: 
+    st.session_state.CS = st.session_state.count
+
 #%% ## finding the road
 st.subheader('Trimming data and identifying road')
 st.write('When data is loaded correctly start trimming data and identifying the road. ')
-run_trimming_checkbox = st.checkbox('Press to start trimming data')
+#run_trimming_checkbox = st.checkbox('Press to start trimming data')
+if config['reader'] == None or uploaded_file == None:
+    run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True)
+else: 
+    run_trimming_checkbox = st.checkbox('Press to start trimming data')
 # Showing the automatic chosen pixel width dependent on the camera type
 st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
 # if uploaded_file == None:
 #     st.write('There is no file uploaded')
 
     
-if run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
-
+#if run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
+if run_trimming_checkbox==False and uploaded_file != None and config['reader'] != None and st.session_state.CS != st.session_state.count:# and bool(st.session_state['uploaded_data']!=None)==True:  
+  st.session_state.CS = st.session_state.count
+  st.session_state.rs=1
+  st.rerun(
+elif run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
+    st.session_state.rs=0 
+    print('session_state',st.session_state.count)
+    
     # st.session_state['info_data']=''
     config['roadwidth_threshold'] = st.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=float(config_default_values['roadwidth_threshold']),step=1.0,min_value=0.0,max_value=200.0)
     # trim=1    
@@ -450,7 +465,13 @@ if run_trimming_checkbox and uploaded_file != None and config['reader'] != None 
     print(config['pixel_width'])
     # Initial trimming & cleaning of the dataset
     #giver dataframe der er trimmet i siderne og længden baseret på info i jobs filen og hvis der er en anden kørebane. + 
-    temperatures_trimmed, trim_result, lane_result, roadwidths = clean_data(temperatures, metadata, config)
+    #temperatures_trimmed, trim_result, lane_result, roadwidths = clean_data(temperatures, metadata, config)
+    try: # Error message if there is at nan row
+        temperatures_trimmed, trim_result, lane_result, roadwidths = clean_data(temperatures, metadata, config)
+    except IndexError: # tilføj 070225
+        st.error('Error in the data, possibly an empty row (nan). Remove the row by manually trimming or remove it from the file')
+        sys.exit(1)
+    
     
     #-- herunder plottes rådata og trimmed data ud fra de parametre der sættes
     fig_heatmaps, (ax1, ax2) = plt.subplots(ncols=2, sharey = True)
@@ -551,13 +572,23 @@ elif uploaded_file != None and config['reader'] != None :
 st.divider()    
 st.subheader('Run analysis')
 st.write('When the trimming is ok, start the analysis by checking the box below. ')
-run_script_checkbox = st.checkbox('Start the analysis')
+#run_script_checkbox = st.checkbox('Start the analysis')
 # trim=None
+if run_trimming_checkbox==False: # 
+    run_script_checkbox = st.toggle('Start the analysis',disabled=True)
+# elif rs==1:
+#     run_script_checkbox = st.toggle('Start the analysis')
+    
+else:    
+    run_script_checkbox = st.toggle('Start the analysis')#, on_change=st.session_state.CS)
+
+
 #%% Herunder køres programmet baseret på trimningen ovenover 
-if run_script_checkbox and uploaded_file != None and config['reader'] != None : 
+if run_script_checkbox and uploaded_file != None and config['reader'] != None and run_trimming_checkbox : 
     # Calculating detections
     #Her regnes og sammenlignes med moving average af arealet rindt om hver pixel
     # print(trim)
+    st.session_state.count=st.session_state.count+1
     moving_average_pixels = detect_temperatures_below_moving_average(
         temperatures_trimmed,
         road_pixels,
@@ -670,7 +701,7 @@ st.divider()
 st.subheader('post analysis')
 if uploaded_file == None or config['reader'] == None:
     st.warning('No data has been processed yet')
-if run_script_checkbox and uploaded_file != None and config['reader'] != None:
+elif run_script_checkbox and uploaded_file != None and config['reader'] != None:
     # DET MATTEOS SCRIPT GØR 
     #counting nuber of pixels in the road
     number_1 = np.count_nonzero(road_pixels)
