@@ -419,7 +419,7 @@ st.write('Because of the chosen camera type the pixel width [m] is: ', config['p
 if run_trimming_checkbox==False and uploaded_file != None and config['reader'] != None and st.session_state.CS != st.session_state.count:# and bool(st.session_state['uploaded_data']!=None)==True:  
   st.session_state.CS = st.session_state.count
   st.session_state.rs=1
-  st.rerun(
+  st.rerun()
 elif run_trimming_checkbox and uploaded_file != None and config['reader'] != None :
     st.session_state.rs=0 
     print('session_state',st.session_state.count)
