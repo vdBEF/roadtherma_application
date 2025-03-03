@@ -588,7 +588,7 @@ st.subheader('Run analysis')
 st.write('When the trimming is ok, start the analysis by checking the box below. ')
 #run_script_checkbox = st.checkbox('Start the analysis')
 # trim=None
-if run_trimming_checkbox==False or uploaded_file == None or config['reader'] != None: # 
+if run_trimming_checkbox==False or uploaded_file == None or config['reader'] == None: # 
     run_script_checkbox = st.checkbox('Start the analysis',disabled=True)
 # elif rs==1:
 #     run_script_checkbox = st.toggle('Start the analysis')
