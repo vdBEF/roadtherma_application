@@ -416,7 +416,7 @@ if 'CS' not in st.session_state:
     st.session_state.CS = st.session_state.count
 
 #%% ## finding the road
-st.subheader('Trimming data and identifying road')
+st.subheader('Trimming data and identifying the road')
 st.write('When data is loaded correctly start trimming data and identifying the road. ')
 #run_trimming_checkbox = st.checkbox('Press to start trimming data')
 if config['reader'] == None or uploaded_file == None:
@@ -697,17 +697,24 @@ st.subheader('Statistics')
 #Der laves to seperate figurer således at den tidskrævende del kan vælges fra
 config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). OBS: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
 
-if config['gradient_statistics_enabled']:
-    figures['stats_gradient'] = nrn_functions.plot_statistics_gradientPlot(title,temperatures_trimmed,roadwidths,road_pixels,config['tolerance'])
-    st.pyplot(figures['stats_gradient'])
+if run_script_checkbox == False: # If the analysis is not completed the statistics calculation and plot can not be toggled
+    
+    config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled'], disabled=True) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
+    PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
+else:
 
-st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist')
-if st.session_state.plot_temp_dist == True:
-    c1, c2 = st.columns(2)
-    with c1: x_lower = st.number_input('lower limit', value=np.min(temperatures_trimmed.values[road_pixels]))
-    with c2: x_higher = st.number_input('higher limit', value = np.max(temperatures_trimmed.values[road_pixels]))
-    figures['stats_tempDist'] = nrn_functions.plot_statistics_TempDistributionPlot(title, temperatures_trimmed, road_pixels, limits=[x_lower,x_higher])  
-    st.pyplot(figures['stats_tempDist'])
+
+    if config['gradient_statistics_enabled']:
+        figures['stats_gradient'] = nrn_functions.plot_statistics_gradientPlot(title,temperatures_trimmed,roadwidths,road_pixels,config['tolerance'])
+        st.pyplot(figures['stats_gradient'])
+
+    PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist')
+    if st.session_state.plot_temp_dist == True:
+        c1, c2 = st.columns(2)
+        with c1: x_lower = st.number_input('lower limit', value=np.min(temperatures_trimmed.values[road_pixels]))
+        with c2: x_higher = st.number_input('higher limit', value = np.max(temperatures_trimmed.values[road_pixels]))
+        figures['stats_tempDist'] = nrn_functions.plot_statistics_TempDistributionPlot(title, temperatures_trimmed, road_pixels, limits=[x_lower,x_higher])  
+        st.pyplot(figures['stats_tempDist'])
 
 
 #%%-------
@@ -781,7 +788,7 @@ st.divider()
 st.subheader('Save results')
 st.write('When the analysis is good enough, the result can be saved either as one combined zip file or individually.')
 #----- 
-
+st.toggle('Advanced download', value=False, key='AD') #toggle advanced download.
 #Herunder er gemme funktion lavet med download knapper
 
 if run_script_checkbox and uploaded_file != None and config['reader'] != None:
@@ -820,9 +827,50 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
 #         mime="image/png"
 #         )
     
-if run_script_checkbox and uploaded_file != None and config['reader'] != None:
+
+if run_script_checkbox and uploaded_file != None and config['reader'] != None and st.session_state.AD == False:
+
+    st.markdown('### Download all files in one folder')
+    st.markdown('This will download the result file, configuration file and uploaded data. If you wish to see the individual files before saving look at the toggle the advanced download')
+    raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
-    st.markdown('### It is posible to download all files in one folder')
+    
+    # st.toggle('Advanced download', value=False, key='AD')    
+    
+    #herunder kan det hele gemmes i zip
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "x") as csv_zip:
+        csv_zip.writestr(input_file_name+"Results.csv", pd.DataFrame(statistics_dataframe).to_csv())
+        # csv_zip.writestr(input_file_name+"raw_data_on_road.csv", pd.DataFrame(save_raw_temp_df).to_csv())
+        # csv_zip.writestr(input_file_name+"moving_average_detections.csv", pd.DataFrame(save_ma_detections_df).to_csv())
+        # csv_zip.writestr(input_file_name+"gradient_detections.csv", pd.DataFrame(save_gradient_detections_df).to_csv())
+        # csv_zip.writestr(input_file_name+"mean_temperatures.csv", pd.DataFrame(save_mean_temp_df).to_csv())
+        csv_zip.writestr(input_file_name+"raw_data.csv", pd.DataFrame(raw_data_df).to_csv())
+        csv_zip.writestr(input_file_name+"configuration_values.json", json.dumps(config, indent=1))
+        #gemmer figurer
+        fig_name = input_file_name+'heatmap_of_trimming.png'
+        csv_zip.write(fig_name, fig_heatmaps.savefig(fig_name, format='png') )
+        fig_name = input_file_name+'identified_road.png'
+        csv_zip.write(fig_name, fig_heatmap1.savefig(fig_name, format='png') )
+        for fi in figures.keys():
+            fig_name = input_file_name+fi+'.png'
+            csv_zip.write(fig_name, figures[fi].savefig(fig_name, format='png') )
+        
+        
+    st.download_button(
+        label="Download zip",
+        data=buf.getvalue(),
+        file_name=input_file_name+"analysis_results.zip",
+        mime="application/zip",
+        )
+
+
+
+
+
+if run_script_checkbox and uploaded_file != None and config['reader'] != None and st.session_state.AD == True:
+    
+    st.markdown('### Download all files in one folder')
     st.markdown('This will download several result files, configuration file and uploaded data. If you wish to see the individual files before saving look at the individual file below ')
     raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
@@ -865,7 +913,7 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
 
 
 if run_script_checkbox and uploaded_file != None and config['reader'] != None:
-    st.markdown('### It is posible to download individual files')
+    st.markdown('### Download individual files')
     
     @st.cache_data
     def convert_df(df):
