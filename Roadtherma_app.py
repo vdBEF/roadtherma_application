@@ -72,8 +72,11 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.91 - JLB1 10-12-2024 - Plotly integration and moved roadwidth_threshold.' #det der skrives i configuration filen
+current_version ='version 0.92 - JLB1 03-03-2025 - Moving average correction.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.92 - JLB1 03-03-2025 - Moving average correction
+Corrected moving average by removing the parameter that changed the window size in the start and end of the data to less than a 100 m window. 
 
 version 0.91 - JLB1 10-12-2024 - Plotly integration and moved roadwidth_threshold
 Created toggles that plot interactive plots. Useful for zooming in. Moved "roadwidth_threshold to the trimming section, because it is used there and now it reset when a new file i uploaded
@@ -269,12 +272,16 @@ if st.session_state.count != st.session_state.count_new:
     if config['reader'] is None and uploaded_file!=None  :
         # st.write(':blue[You have to choose a camera type before data is loaded.]')
         st.info('You have to choose a camera type before data is loaded')
+        st.session_state['info_data']=''
     elif uploaded_file==None and config['reader']==None:
         st.info('You have to upload a data file and choose a camera type')
+        st.session_state['info_data']=''
     elif uploaded_file==None and config['reader']!=None:
         st.info('You have to upload a data file')
+        st.session_state['info_data']=''
     elif uploaded_file!=None and config['reader']==None:
         st.info('You have to choose a camera type before data is loaded')
+        st.session_state['info_data']=''
     elif uploaded_file is not None:
 
         # Laver en temp fil som kan bruges mere en gang, så readerne virker
@@ -389,6 +396,13 @@ else:
 # print('Path: {}'.format(file_path))
 # st.write('Input filen er:', file_path) 
 #--------------------------------------------------------------------------
+
+if config['reader'] != None and uploaded_file != None and df.distance.iloc[-1]<200:
+    st.write(st.session_state['info_data'])
+    st.warning('The paved distance is less than 200 m')
+else:
+    st.write(st.session_state['info_data'])
+
 
 road_pixels=[0]
 
