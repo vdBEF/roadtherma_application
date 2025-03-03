@@ -695,7 +695,6 @@ st.subheader('Statistics')
 #         # st.pyplot(figures['stats'])
 
 #Der laves to seperate figurer således at den tidskrævende del kan vælges fra
-config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). OBS: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
 
 if run_script_checkbox == False: # If the analysis is not completed the statistics calculation and plot can not be toggled
     
@@ -703,7 +702,7 @@ if run_script_checkbox == False: # If the analysis is not completed the statisti
     PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
 else:
 
-
+config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). OBS: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
     if config['gradient_statistics_enabled']:
         figures['stats_gradient'] = nrn_functions.plot_statistics_gradientPlot(title,temperatures_trimmed,roadwidths,road_pixels,config['tolerance'])
         st.pyplot(figures['stats_gradient'])
