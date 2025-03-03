@@ -770,7 +770,9 @@ elif run_script_checkbox and uploaded_file != None and config['reader'] != None:
 
     statistics_dataframe['Roadpixels']=number_1
     statistics_dataframe['MA Roadpixels']=number_2
-
+    
+elif uploaded_file != None and config['reader'] != None:
+    st.warning('The analysis must be completed before any results can be shown')
 
 # elif road_pixels ==None:
 #     st.write('')
