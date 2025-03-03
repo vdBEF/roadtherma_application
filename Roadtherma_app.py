@@ -832,7 +832,7 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None:
 if run_script_checkbox and uploaded_file != None and config['reader'] != None and st.session_state.AD == False:
 
     st.markdown('### Download all files in one folder')
-    st.markdown('This will download the result file, configuration file and uploaded data. If you wish to see the individual files before saving look at the toggle the advanced download')
+    st.markdown('This will download the result file, configuration file and uploaded data. If you wish to see the individual files before saving toggle the advanced download')
     raw_data_df = st.session_state['uploaded_data'] #den uploadede datafil
     
     
