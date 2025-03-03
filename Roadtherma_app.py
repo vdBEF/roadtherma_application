@@ -913,7 +913,7 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None an
 
 
 
-if run_script_checkbox and uploaded_file != None and config['reader'] != None:
+if run_script_checkbox and uploaded_file != None and config['reader'] != None and st.session_state.AD == True:
     st.markdown('### Download individual files')
     
     @st.cache_data
