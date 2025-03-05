@@ -347,12 +347,14 @@ if st.session_state.count != st.session_state.count_new:
             st.session_state['uploaded_data']
         else:    
             st.dataframe(st.session_state['uploaded_data'])
-            st.write(st.session_state['info_data'])
+            #st.write(st.session_state['info_data'])
 elif st.session_state.count == st.session_state.count_new:
     # st.write('count = count_new så df bliver bare stående')
     if config['reader'] == None or uploaded_file == None:
         st.session_state['uploaded_data']=None
         st.dataframe(st.session_state['uploaded_data'])
+        st.session_state['info_data']=''
+        st.write(st.session_state['info_data'])
     else:
         st.dataframe(st.session_state['uploaded_data'])
     #st.write('count = count_new')
@@ -424,7 +426,8 @@ if config['reader'] == None or uploaded_file == None:
 else: 
     run_trimming_checkbox = st.checkbox('Press to start trimming data')
 # Showing the automatic chosen pixel width dependent on the camera type
-st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
+if config['reader'] != None and uploaded_file != None:
+    st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
 # if uploaded_file == None:
 #     st.write('There is no file uploaded')
 
