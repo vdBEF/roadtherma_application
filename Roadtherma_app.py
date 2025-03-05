@@ -349,7 +349,7 @@ if st.session_state.count != st.session_state.count_new:
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None:
             st.session_state['info_data']=''
-            st.session_state['uploaded_data']=None
+            st.session_state['uploaded_data']=''
             #shows a message about the data usage
             st.write(st.session_state['info_data'])
             st.session_state['uploaded_data']
@@ -359,7 +359,7 @@ if st.session_state.count != st.session_state.count_new:
 elif st.session_state.count == st.session_state.count_new:
     # st.write('count = count_new så df bliver bare stående')
     if config['reader'] == None or uploaded_file == None:
-        st.session_state['uploaded_data']=None
+        st.session_state['uploaded_data']=''
         st.dataframe(st.session_state['uploaded_data'])
         st.session_state['info_data']=''
         st.write(st.session_state['info_data'])
