@@ -257,7 +257,7 @@ with col1:
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
-    st.session_state['uploaded_data']=''
+    st.session_state['uploaded_data']=None
     st.session_state['info_data']=''
 with col2:
     st.write('Input file must be a csv file. If this is not the case, change it manually.')
@@ -349,7 +349,7 @@ if st.session_state.count != st.session_state.count_new:
         # # remove messages/info if file or reader is removed    
         if config['reader'] == None or uploaded_file == None:
             st.session_state['info_data']=''
-            st.session_state['uploaded_data']=''
+            st.session_state['uploaded_data']=None
             #shows a message about the data usage
             st.write(st.session_state['info_data'])
             st.session_state['uploaded_data']
@@ -359,7 +359,7 @@ if st.session_state.count != st.session_state.count_new:
 elif st.session_state.count == st.session_state.count_new:
     # st.write('count = count_new så df bliver bare stående')
     if config['reader'] == None or uploaded_file == None:
-        st.session_state['uploaded_data']=''
+        st.session_state['uploaded_data']=None
         st.dataframe(st.session_state['uploaded_data'])
         st.session_state['info_data']=''
         st.write(st.session_state['info_data'])
