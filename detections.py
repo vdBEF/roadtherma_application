@@ -27,8 +27,8 @@ def detect_temperatures_below_moving_average(temperatures, road_pixels, metadata
 def _calc_moving_average(df, road_pixels, window):
     df = df.copy(deep=True)
     df.values[~ road_pixels] = 'NaN'
-    #min_periods = int(window * 0.80) # There must be 80% of <window> number of pixels
-    min_periods = int(window) # her tages window ~100m (ikke helt 100 meter for TF siden pixel afstand i længderetningen ikke er ens hver linje, svinger lidt. ) 
+    min_periods = int(window * 0.80) # There must be 80% of <window> number of pixels
+    #min_periods = int(window) # her tages window ~100m (ikke helt 100 meter for TF siden pixel afstand i længderetningen ikke er ens hver linje, svinger lidt. ) 
     df_avg = df.rolling(window, center=True, min_periods=min_periods).mean()
     moving_average = df_avg.mean(axis=1)
     return moving_average
