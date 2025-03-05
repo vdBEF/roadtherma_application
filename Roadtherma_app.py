@@ -257,7 +257,7 @@ with col1:
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
-    st.session_state['uploaded_data']=None
+    st.session_state['uploaded_data']=''
     st.session_state['info_data']=''
 with col2:
     st.write('Input file must be a csv file. If this is not the case, change it manually.')
@@ -273,8 +273,8 @@ if st.session_state.count != st.session_state.count_new:
         # st.write(':blue[You have to choose a camera type before data is loaded.]')
         st.info('You have to choose a camera type before data is loaded')
         st.session_state['info_data']=''
-        #st.session_state['RunCode']=False # 050325
-        #st.session_state['RunTrim']=False # 050325
+        st.session_state['RunCode']=False # 050325
+        st.session_state['RunTrim']=False # 050325
     elif uploaded_file==None and config['reader']==None:
         st.info('You have to upload a data file and choose a camera type')
         st.session_state['info_data']=''
