@@ -273,6 +273,8 @@ if st.session_state.count != st.session_state.count_new:
         # st.write(':blue[You have to choose a camera type before data is loaded.]')
         st.info('You have to choose a camera type before data is loaded')
         st.session_state['info_data']=''
+        #st.session_state['RunCode']=False # 050325
+        #st.session_state['RunTrim']=False # 050325
     elif uploaded_file==None and config['reader']==None:
         st.info('You have to upload a data file and choose a camera type')
         st.session_state['info_data']=''
@@ -422,9 +424,9 @@ st.subheader('Trimming data and identifying the road')
 st.write('When data is loaded correctly start trimming data and identifying the road. ')
 #run_trimming_checkbox = st.checkbox('Press to start trimming data')
 if config['reader'] == None or uploaded_file == None:
-    run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True)
+    run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True, key='RunTrim')
 else: 
-    run_trimming_checkbox = st.checkbox('Press to start trimming data')
+    run_trimming_checkbox = st.checkbox('Press to start trimming data', key='RunTrim')
 # Showing the automatic chosen pixel width dependent on the camera type
 if config['reader'] != None and uploaded_file != None:
     st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
@@ -592,12 +594,12 @@ st.write('When the trimming is ok, start the analysis by checking the box below.
 #run_script_checkbox = st.checkbox('Start the analysis')
 # trim=None
 if run_trimming_checkbox==False or uploaded_file == None or config['reader'] == None: # 
-    run_script_checkbox = st.checkbox('Start the analysis',disabled=True)
+    run_script_checkbox = st.checkbox('Start the analysis',disabled=True,key='RunCode')
 # elif rs==1:
 #     run_script_checkbox = st.toggle('Start the analysis')
     
 else:    
-    run_script_checkbox = st.checkbox('Start the analysis')#, on_change=st.session_state.CS)
+    run_script_checkbox = st.checkbox('Start the analysis',key='RunCode')#, on_change=st.session_state.CS)
 
 
 #%% Herunder køres programmet baseret på trimningen ovenover 
