@@ -278,12 +278,18 @@ if st.session_state.count != st.session_state.count_new:
     elif uploaded_file==None and config['reader']==None:
         st.info('You have to upload a data file and choose a camera type')
         st.session_state['info_data']=''
+        st.session_state['RunCode']=False # 050325
+        st.session_state['RunTrim']=False # 050325
     elif uploaded_file==None and config['reader']!=None:
         st.info('You have to upload a data file')
         st.session_state['info_data']=''
+        st.session_state['RunCode']=False # 050325
+        st.session_state['RunTrim']=False # 050325
     elif uploaded_file!=None and config['reader']==None:
         st.info('You have to choose a camera type before data is loaded')
         st.session_state['info_data']=''
+        st.session_state['RunCode']=False # 050325
+        st.session_state['RunTrim']=False # 050325
     elif uploaded_file is not None:
 
         # Laver en temp fil som kan bruges mere en gang, så readerne virker
