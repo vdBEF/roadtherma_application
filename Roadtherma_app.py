@@ -275,21 +275,25 @@ if st.session_state.count != st.session_state.count_new:
         st.session_state['info_data']=''
         st.session_state['RunCode']=False # 050325
         st.session_state['RunTrim']=False # 050325
+        st.session_state['AD']=False # 060325
     elif uploaded_file==None and config['reader']==None:
         st.info('You have to upload a data file and choose a camera type')
         st.session_state['info_data']=''
         st.session_state['RunCode']=False # 050325
         st.session_state['RunTrim']=False # 050325
+        st.session_state['AD']=False # 060325
     elif uploaded_file==None and config['reader']!=None:
         st.info('You have to upload a data file')
         st.session_state['info_data']=''
         st.session_state['RunCode']=False # 050325
         st.session_state['RunTrim']=False # 050325
+        st.session_state['AD']=False # 060325
     elif uploaded_file!=None and config['reader']==None:
         st.info('You have to choose a camera type before data is loaded')
         st.session_state['info_data']=''
         st.session_state['RunCode']=False # 050325
         st.session_state['RunTrim']=False # 050325
+        st.session_state['AD']=False # 060325
     elif uploaded_file is not None:
 
         # Laver en temp fil som kan bruges mere en gang, så readerne virker
@@ -734,7 +738,8 @@ else:
 st.divider()
 st.subheader('post analysis')
 if uploaded_file == None or config['reader'] == None:
-    st.warning('No data has been processed yet')
+    #st.warning('No data has been processed yet')
+    st.warning('Upload data and choose a reader to get the results')
 elif run_script_checkbox and uploaded_file != None and config['reader'] != None:
     # DET MATTEOS SCRIPT GØR 
     #counting nuber of pixels in the road
@@ -803,7 +808,14 @@ st.divider()
 st.subheader('Save results')
 st.write('When the analysis is good enough, the result can be saved either as one combined zip file or individually.')
 #----- 
-st.toggle('Advanced download', value=False, key='AD') #toggle advanced download.
+
+if run_script_checkbox==False:
+    st.toggle('Advanced download', value=False, key='AD', disabled=True)
+else:    
+    st.toggle('Advanced download', value=False, key='AD') 
+#st.toggle('Advanced download', value=False, key='AD') #toggle advanced download.
+
+
 #Herunder er gemme funktion lavet med download knapper
 
 if run_script_checkbox and uploaded_file != None and config['reader'] != None:
