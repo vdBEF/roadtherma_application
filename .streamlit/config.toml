@@ -3,4 +3,4 @@ primaryColor='#0c5795'  # default:"#F63366"
 backgroundColor="#FFFFFF"
 secondaryBackgroundColor="#bce3eb" #"#bce3eb" #default: #F0F2F6
 textColor="#262730"
-font="sans serif"
+font="Sans serif"
