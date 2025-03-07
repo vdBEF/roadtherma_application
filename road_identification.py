@@ -245,6 +245,16 @@ def trimguess(temperatures, config):
             k=k+1
         print('k=',k)     
         # o=k
+
+        print('k-n',k-n)
+        if k-n<15 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
+            TrimWarning='Auto trim error. Do a manual trim.'
+            n=0
+            k=np.size(Temp1,1)-3
+        else:
+            TrimWarning=''
+
+       
         if config['pixel_width']==0.25: #or config['pixel_width']==0.03 :
             StartTrim=(n-1)*config['pixel_width']
             if StartTrim<0:
@@ -265,5 +275,5 @@ def trimguess(temperatures, config):
         #print('StartTrim=',StartTrim)
         #print('EndTrim=',EndTrim)
         
-        return StartTrim, EndTrim
+        return StartTrim, EndTrim, TrimWarning
 
