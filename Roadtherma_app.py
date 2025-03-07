@@ -473,7 +473,10 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     temperatures, metadata = split_temperature_data(df)
     # st.write(temperatures)#plot af dataframe
     
-    StartTrim, EndTrim=trimguess(temperatures, config) # trim guess
+    StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config) # trim guess
+
+    if len(TrimWarning)>1:         
+        st.error(TrimWarning)  
     
     st.write('The parameters used for trimming are specified here:')
     with st.form(key='columns_in_form'):
