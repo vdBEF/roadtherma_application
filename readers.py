@@ -30,6 +30,14 @@ def _read_Voegele(filename):
             print(df)
             df=df.replace(',','.')
             print(df)
+            # Finding nan rows and deleting them: (100325)
+            DL=[]    
+            for i in range(len(df)):
+                if any(df.iloc[i].isna())==True:
+                    DL.append(i)
+            print(DL)           
+            df.drop(DL,inplace=True)
+        
             # df, str1, res=_read_voegele_1(filename)
         except:
             # df, str1, res=_read_voegele_2(filename)
@@ -54,7 +62,12 @@ def _read_TF(filename):
         
         try:
             df, str1, res=function(filename)
-          
+            # Finding nan rows and deleting them: (100325)
+            DL=[]    
+            for i in range(len(df)):
+                if any(df.iloc[i].isna())==True:
+                    DL.append(i)
+            print(DL)       
         except:
             pass
         else:
@@ -74,6 +87,12 @@ def _read_Moba(filename):
     for function in list_functions:
         try:
             df, str1, res=function(filename)
+            # Finding nan rows and deleting them: (100325)
+            DL=[]    
+            for i in range(len(df)):
+                if any(df.iloc[i].isna())==True:
+                    DL.append(i)
+            print(DL)       
         except:
             pass
         else:
