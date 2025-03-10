@@ -250,7 +250,7 @@ def trimguess(temperatures, config):
         if k-n<15 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
             TrimWarning='Auto trim error. Do a manual trim.'
             n=0
-            k=np.size(Temp1,1)-3
+            k=np.size(Temp1,1)-4
         else:
             TrimWarning=''
 
