@@ -72,8 +72,10 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.92 - JLB1 03-03-2025 - Moving average correction.' #det der skrives i configuration filen
+current_version ='version 0.93 - JLB1 21-05-2025 - Twolane autotrim beta and default reader beta.' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.93 - JLB1 21-05-2025 - Twolane autotrim beta and default reader beta
 
 version 0.92 - JLB1 03-03-2025 - Moving average correction
 Corrected moving average by removing the parameter that changed the window size in the start and end of the data to less than a 100 m window. 
@@ -251,8 +253,10 @@ df=[]
                
 with col1:
     st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with what type of camera and attach the file.*] ')
-    config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+   config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
                                     on_change=counter_func )
+    #config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+     #                               on_change=counter_func )
     # config['reader'] = st.selectbox('Choose which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
     #                                 on_change=counter_func )
 # st.info('You have to choose a camera type before data is loaded')    
