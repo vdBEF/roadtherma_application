@@ -445,7 +445,8 @@ st.write('When data is loaded correctly start trimming data and identifying the 
 #run_trimming_checkbox = st.checkbox('Press to start trimming data')
 if config['reader'] == None or uploaded_file == None:
     #run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True)
-    run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True, key='RunTrim')
+    #run_trimming_checkbox = st.checkbox('Press to start trimming data', disabled=True, key='RunTrim') # Use this one
+    run_trimming_checkbox = st.checkbox('Press to start trimming data', key='RunTrim') # for test only
 else: 
     #run_trimming_checkbox = st.checkbox('Press to start trimming data')
     run_trimming_checkbox = st.checkbox('Press to start trimming data', key='RunTrim')
