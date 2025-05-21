@@ -240,8 +240,11 @@ col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
 #additional_text='' #starter med en tom
 #navnene på alle readers i readers.py gemmes her så de kan vælges
-reader_list = ['Voegele', 'TF','Moba']
-
+reader_list = ['Voegele', 'TF','Moba','Default']
+# pixel størrelse/mængde for default reader
+r1=0
+c1=0
+df=[]
 
 # reader_list = ['voegele_M30','TF_time_K', 'voegele_example','voegele_M119', 'voegele_taulov','TF_old',
 #                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
@@ -317,8 +320,9 @@ if st.session_state.count != st.session_state.count_new:
         
         #uploaded_file er "stien" til den uplodede data. Nogle filers readers giver både dataframe og tekst
         try:
-            if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba':
-                st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
+            if config['reader']=='TF' or config['reader']=='Voegele' or config['reader']=='Moba' or config['reader']=='Default':
+                with st.spinner("Loading data..."):
+                    st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
             # st.write(additional_text)
             # print(additional_text)
             
@@ -389,7 +393,9 @@ df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten 
 #Removes the pixel width value if the reader is not chosen
 if config['reader'] == None:
     config['pixel_width']=''
-else:  
+else:
+    if uploaded_file != None: # for default reader
+        r1,c1=df.shape
     # defines the pixel width value based on the reader.
     if config['reader']=='TF':
         # config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
