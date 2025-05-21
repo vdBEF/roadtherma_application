@@ -246,7 +246,6 @@ reader_list = ['Voegele', 'TF','Moba','Default']
 # pixel størrelse/mængde for default reader
 r1=0
 c1=0
-df=[]
 
 # reader_list = ['voegele_M30','TF_time_K', 'voegele_example','voegele_M119', 'voegele_taulov','TF_old',
 #                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
@@ -399,8 +398,8 @@ if config['reader'] == None:
     config['pixel_width']=''
 else:
     if uploaded_file != None: # for default reader
-        #r1,c1=df.shape
-        r1,c1=np.size(df)
+        r1,c1=df.shape
+        
     else:
         c1=0
         r1=0
