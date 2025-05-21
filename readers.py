@@ -764,6 +764,7 @@ def _read_all(filename):
                         startline1=StartLine
                         break
     except:
+        print(line1)
         print('Fail')        
     print('111111111111111')   
     StartLine=0
