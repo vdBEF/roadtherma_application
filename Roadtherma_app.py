@@ -400,7 +400,7 @@ if config['reader'] == None:
 else:
     if uploaded_file != None: # for default reader
         r1,c1=df.shape
-    else
+    else:
         c1=0
         r1=0
     # defines the pixel width value based on the reader.
