@@ -210,51 +210,46 @@ def interpolate_roller_pixels(temperature_pixels, roller_pixels, road_pixels):
     temperature_pixels[points_interpolate] = np.mean(temperature_pixels[points])
 
 
-
-def trimguess(temperatures, config):    
+def trimguess(temperatures, config, TwoLane, ForceTrim):    
 
     autotrim1=1
     if autotrim1==1:
-
-        #TEMP=temperatures[temperatures>=config['roadwidth_threshold']]
+        
         TEMP=temperatures[temperatures>=100]
-# Temp1=TEMP.dropna(how='all',axis=1)
-        Temp1=TEMP
-# print(Temp1.mean())
+
+        Temp1=TEMP # Temperatures over 100C
+        Temp2=temperatures
+
         if config['pixel_width']==0.03:
             Limit=100
         else:
-            #Limit=250
             Limit=200
-        print(((Temp1.count())))
-        print(((Temp1.count()>=Limit)))
+   
         n=0
         for i in range(np.size(Temp1,1)-1):
-    # n=n+1 
-            # print(i)
-            if (Temp1.count()>=Limit).iloc[i]==True: # indsat iloc 01102024
+
+            if (Temp1.count()>=Limit).iloc[i]==True: # indsat iloc 05092024
                 break
             n=n+1
-        print('n=',n)
+        # print('n=',n)
         k=n
         print(range(np.size(Temp1,1)-n-1))
         for i in range(np.size(Temp1,1)-n-1):
-            # print(i+n)
-            if (Temp1.count()>=Limit).iloc[i+n]==False: # indsat iloc 01102024
+            if (Temp1.count()>=Limit).iloc[i+n]==False: # indsat iloc 05092024
                 break
             k=k+1
-        print('k=',k)     
-        # o=k
-
-        print('k-n',k-n)
-        if k-n<15 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
+        # print('k=',k)     
+        # print('k-n',k-n)
+        if k-n<=30 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
             TrimWarning='Auto trim error. Do a manual trim.'
             n=0
-            k=np.size(Temp1,1)-4
+            k=np.size(Temp1,1)-4 # minus 4 fordi +4 til sidst
+            print('k=max',k)
+            kn=1
         else:
             TrimWarning=''
-
-       
+        
+        
         if config['pixel_width']==0.25: #or config['pixel_width']==0.03 :
             StartTrim=(n-1)*config['pixel_width']
             if StartTrim<0:
@@ -266,7 +261,300 @@ def trimguess(temperatures, config):
             if StartTrim<0:
                 StartTrim=0.0
         print('StartTrim=',StartTrim)
-        print('EndTrim=',EndTrim)      
+        print('EndTrim=',EndTrim)
+        
+        
+        p1=0
+        p2=0
+        p3=0
+        p4=0
+        
+        cond1=(Temp1.count()).iloc[n+1]>500
+        if (config['pixel_width']==0.25):
+            cond= (n<11 or k>np.shape(Temp2)[1]-10)
+        else:
+            cond= (n<20 or k>np.shape(Temp2)[1]-20)
+
+        if (config['pixel_width']==0.25):
+            cond2=Temp2.std().iloc[n:k].mean()<36 # måske 30 bedre
+           
+        else:
+            p1=Temp2.std().iloc[n:k].std()<10
+            p2=(Temp2.mean().iloc[n:k].var()<300 and Temp2.std().iloc[n:k].std()<25 )
+            p3=(Temp2.mean().iloc[n:n+2].mean()>90 or Temp2.mean().iloc[k-2:k].mean()>90)
+            p4=(Temp2.mean().iloc[n+2:n+6].mean()>85 or Temp2.mean().iloc[k-6:k-2].mean()>85 )
+            
+            cond2=p1 or (p2 and (p3 or p4))
+        print('p1',p1)
+        print('p2',p2)
+        print('p3',p3)
+        print('p4',p4)
+        print('cond',cond)
+        print('cond1',cond1)
+        print('cond2',cond2)
+        if abs(StartTrim-EndTrim)>5 and (TwoLane==False and ((cond==True and cond2==True) or (ForceTrim==True))):# or (cond1==True and cond2==True)):
+        # if TwoLane==False: #and ((cond==True and cond2==True) or (ForceTrim==True))) # Always turned on
+
+            pp=0
+            # lane to the right
+            if pp==0:#Temp2.mean().iloc[0]<60 and Temp2.mean().iloc[k-1]>60:
+                
+                print('TWO PAVED LANES')
+
+                TT=[]
+                for i in range(0,np.size(Temp2,1)):
+                
+                    TT.append(Temp2.mean()[Temp2.mean()>50])
+                    # TT.append((Temp2.iloc[i]<120).value_counts()[True])
+                # print(len(TT))
+               
+                N=len(Temp2.mean())-len(TT) 
+                
+                # y=0
+                # TTT=[]
+                TT=Temp2.mean() 
+                print('len(TT)',len(TT))
+                # if config['pixel_width']==0.03:  
+                
+             
+                    
+                LLN=Temp2.mean()[Temp2.mean()>50].mean()
+                LLK=Temp2.mean()[Temp2.mean()>50].mean()
+                print('LLN',LLN)
+                print('LLK',LLK)    
+                # print('LL',LL)
+                # nT=0
+                
+                ii=0 
+                nnnT=0
+                nT=0+nnnT
+                nnT=nT
+                print('nT',nT)
+                LL=Temp2.mean()[Temp2.mean()>50].mean()
+         
+                for p in range(100):
+                            
+                        if abs(TT.iloc[(ii+p)])>LLN:
+
+                            if TT.iloc[(ii+p)]<LL:
+   
+                                l=l+1
+                                print('l',l)
+                                nnnT=nnT+l
+
+                        
+                            else: #TT.iloc[(ii+1)]<TT.iloc[(ii+2)]:
+                               nT=nnT+l
+ 
+                               if len(TT)>200 and (n<=5 or len(TrimWarning)>0):
+                                   nT=nnT+l-4
+                                   print('TF nT',nT)
+                                   print('LL',LL)
+                                   break
+                               elif len(TT)>200: 
+                                   nT=nnT+l-4
+                                   print('TF nT2',nT)
+                                   print('LL',LL)
+                               else:
+                                    nT=nnT+l
+                                    print('nT',nT)
+                                    print('LL',LL)
+                                    break
+                               break    
+                    # break    
+                    
+                if n-nT<=5 and n<=2 and len(TT)>200:
+                    print('LL*1.2') 
+                    for p in range(100):
+
+                        l=p
+                        if abs(TT.iloc[(ii+p)])>LLN :
+
+                            if TT.iloc[(ii+p)]<LL+2:
+                           
+                                print('l',l)
+                                nT=nnT+l
+
+                            else: #TT.iloc[(ii+1)]<TT.iloc[(ii+2)]:
+                              nT=nnT+l
+
+                              if len(TT)>200 and (n<=5 or len(TrimWarning)>0):
+                                    nT=nnT+l-4
+                                    print('TF nT',nT)
+                                    print('LL',LL)
+                                    break
+                              else:
+                                    nT=nnT+l-1
+                                    print('nT',nT)
+                                    print('LL',LL)
+                                    break
+                              break 
+  
+     
+                kkkT=len(TT)-1
+                kT=kkkT
+
+                kkT=kT
+                # print('start kT',kT)
+                LL=Temp2.mean()[Temp2.mean()>50].mean()
+                
+                # print('abs(TT.iloc[kT])',abs(TT.iloc[kT]),kT)
+                for p in range(1,150,1):
+
+                    l=p
+                    # print('abs(TT.iloc[kT-(p)])',abs(TT.iloc[kT-(p)]),kT-(p))
+
+                    cn=abs(TT.iloc[(kT-(p+1))])<LL
+                    
+                    if cn:
+                        # l=l+1
+                        kkkT=kkT-l
+                        # print('p',p)
+                        # print('LL',LL)
+                        # # print('abs(TT.iloc[kT])',abs(TT.iloc[kT]),kT)
+                        # print('abs(TT.iloc[kT-(p-1)])',abs(TT.iloc[kT-(p-1)]),kT-(p-1))
+                        # print('abs(TT.iloc[kT-(p)])',abs(TT.iloc[kT-(p)]),kT-(p))
+                        
+                    else:
+                            l=p                               
+                            kT=kkT-l
+                            # if TT.iloc[(kT-(p))]>LL:
+                            #     break
+                            # l=l-2
+                            if len(TT)-kkkT+2>=nT:
+                                rr=nT-1
+                            else:
+                                rr=len(TT)-kkkT+2
+                            for p in range(rr):
+                                print('abs(TT.iloc[kkkT-(p+2)])',abs(TT.iloc[kkkT-(p+2)]),kkkT-(p+2))
+                                if abs(TT.iloc[(kkkT-(p+2))])<LL: 
+                                    kT=kkkT-p
+                                    break
+                            
+                            
+                            if len(TT)>200 and (k>=270 or len(TrimWarning)>0):
+                                kT=kkT-l+4
+                                print('TF kT',kT)
+                                print('LL',LL)
+                                if (kkT-l)>272:
+                                    kT=280
+                                break    
+                            elif len(TT)>200: 
+                                kT=kkT-l+4
+                                print('TF nT2',nT)
+                                print('LL',LL)        
+                                    
+                            break
+                            break               
+                
+
+                print('End nT',nT)
+                print('End kT',kT)  
+   
+            
+                if config['pixel_width']==0.25: #or config['pixel_width']==0.03 :
+                    if nT>n and n>6:
+                        n=n
+                    else:
+                        n=nT
+                    if kT<k and k<len(TT)-10:
+                        k=k
+                        EndTrim=(k+1)*config['pixel_width']
+                    else:
+                        k=kT
+                        EndTrim=(k+2)*config['pixel_width']
+                    StartTrim=(n-1)*config['pixel_width']
+                    if StartTrim<0:
+                        StartTrim=0.0
+                    # EndTrim=(k+1)*config['pixel_width']
+                
+                elif config['pixel_width']==0.03:
+                   
+                    print('n=nT')
+                    n=nT
+                    StartTrim=round((n-4)*config['pixel_width'],2)
+                      
+                    if kT<=k and k<(len(TT)-40):# and kT<k-20:
+                        k=kT
+                        EndTrim=round((k+4)*config['pixel_width'],2)
+                    
+                    else:
+                        print('k=kT ',kT)
+                        k=kT
+                        EndTrim=round((k+4)*config['pixel_width'],2)
+
+                    if StartTrim<0:
+                        StartTrim=0.0
+                print('StartTrim=',StartTrim)
+                print('EndTrim=',EndTrim)        
+        
+            if k-n<30 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
+                TrimWarning='Auto trim error. Do a manual trim.'
+                n=0
+                k=np.size(Temp1,1)-4 # minus 4 fordi +4 til sidst
+            else:
+                TrimWarning=''        
+        
+        return StartTrim, EndTrim, TrimWarning
+
+
+#old version
+#def trimguess(temperatures, config):    
+
+    #autotrim1=1
+   # if autotrim1==1:
+
+        #TEMP=temperatures[temperatures>=config['roadwidth_threshold']]
+        #TEMP=temperatures[temperatures>=100]
+# Temp1=TEMP.dropna(how='all',axis=1)
+       # Temp1=TEMP
+# print(Temp1.mean())
+        #if config['pixel_width']==0.03:
+         #   Limit=100
+        #else:
+            #Limit=250
+         #   Limit=200
+        #print(((Temp1.count())))
+        #print(((Temp1.count()>=Limit)))
+        #n=0
+        #for i in range(np.size(Temp1,1)-1):
+    # n=n+1 
+            # print(i)
+           # if (Temp1.count()>=Limit).iloc[i]==True: # indsat iloc 01102024
+          #      break
+         #   n=n+1
+        #print('n=',n)
+        #k=n
+        #print(range(np.size(Temp1,1)-n-1))
+        #for i in range(np.size(Temp1,1)-n-1):
+            # print(i+n)
+          #  if (Temp1.count()>=Limit).iloc[i+n]==False: # indsat iloc 01102024
+         #       break
+        #    k=k+1
+       # print('k=',k)     
+        # o=k
+
+        #print('k-n',k-n)
+        #if k-n<15 and config['pixel_width']==0.03 or k-n<5 and config['pixel_width']==0.25:
+           # TrimWarning='Auto trim error. Do a manual trim.'
+          #  n=0
+         #   k=np.size(Temp1,1)-4
+        #else:
+         #   TrimWarning=''
+
+       
+        #if config['pixel_width']==0.25: #or config['pixel_width']==0.03 :
+            #StartTrim=(n-1)*config['pixel_width']
+           # if StartTrim<0:
+          #      StartTrim=0.0
+         #   EndTrim=(k+1)*config['pixel_width']
+        #elif config['pixel_width']==0.03:
+            #StartTrim=round((n-4)*config['pixel_width'],2)
+           # EndTrim=round((k+4)*config['pixel_width'],2)
+         #   if StartTrim<0:
+          #      StartTrim=0.0
+        #print('StartTrim=',StartTrim)
+        #print('EndTrim=',EndTrim)      
         #if config['pixel_width']==0.25 or config['pixel_width']==0.03 :
             #StartTrim=(n-1)*config['pixel_width']
             #if StartTrim<0:
@@ -275,5 +563,5 @@ def trimguess(temperatures, config):
         #print('StartTrim=',StartTrim)
         #print('EndTrim=',EndTrim)
         
-        return StartTrim, EndTrim, TrimWarning
+        #return StartTrim, EndTrim, TrimWarning
 
