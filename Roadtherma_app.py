@@ -399,7 +399,8 @@ if config['reader'] == None:
     config['pixel_width']=''
 else:
     if uploaded_file != None: # for default reader
-        r1,c1=df.shape
+        #r1,c1=df.shape
+        r1,c1=np.size(df)
     else:
         c1=0
         r1=0
