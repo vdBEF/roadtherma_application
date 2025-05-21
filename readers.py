@@ -764,13 +764,14 @@ def _read_all(filename):
                         startline1=StartLine
                         break
     except:
-        print(line1)
+        #print(line1)
         print('Fail')        
     print('111111111111111')   
     StartLine=0
     try:
         with open(filename, 'r') as f:
-            lineK=f.readlines()    
+            lineK=f.readlines()
+            print(lineK)
             for i in range(40):
                 
                 line1=lineK[i]
