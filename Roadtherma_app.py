@@ -452,6 +452,8 @@ else:
 # Showing the automatic chosen pixel width dependent on the camera type
 if config['reader'] != None and uploaded_file != None:
     st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
+    # # A manual method of choosing pixel width if the standard method is no working.
+    st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
 # if uploaded_file == None:
 #     st.write('There is no file uploaded')
 
@@ -469,7 +471,13 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     config['roadwidth_threshold'] = st.number_input('Threshold temperature used when estimating the road width (roadwidth_threshold)', value=float(config_default_values['roadwidth_threshold']),step=1.0,min_value=0.0,max_value=200.0)
     # trim=1    
     # # A manual method of choosing pixel width if the standard method is no working.
-    st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
+    #st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
+
+    st.write('')
+    st.write('Toggle to deactivate:')
+    Twolane=st.toggle('Two paved lanes in the data', value=False)
+    # st.write('')
+    ForceTrim=st.toggle('Force autotrim to run', value=False)   
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
@@ -483,7 +491,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     temperatures, metadata = split_temperature_data(df)
     # st.write(temperatures)#plot af dataframe
     
-    StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config) # trim guess
+    StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config,Twolane,Forcetrim) # trim guess
 
     if len(TrimWarning)>1:         
         st.error(TrimWarning)  
