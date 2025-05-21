@@ -333,7 +333,7 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
                 LL=Temp2.mean()[Temp2.mean()>50].mean()
          
                 for p in range(100):
-                            
+                        l=p    
                         if abs(TT.iloc[(ii+p)])>LLN:
 
                             if TT.iloc[(ii+p)]<LL:
