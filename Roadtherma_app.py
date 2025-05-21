@@ -397,7 +397,7 @@ else:
     if uploaded_file != None: # for default reader
         r1,c1=df.shape
     # defines the pixel width value based on the reader.
-    if config['reader']=='TF':
+    if (config['reader']=='TF' or config['reader']=='Default') and c1>200:
         # config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
         config['pixel_width']=0.03; config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8
         # st.write('pixel adjust:',config['roadwidth_adjust_left'])
