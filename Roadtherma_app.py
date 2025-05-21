@@ -490,8 +490,9 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     #Her deles dataframen ind i en df med temperatur data og en med resten af kolonnerne.
     temperatures, metadata = split_temperature_data(df)
     # st.write(temperatures)#plot af dataframe
-    
-    StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config,Twolane,Forcetrim) # trim guess
+    st.write('')
+    with st.spinner("Autotrimming data..."): 
+        StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config, Twolane ,Forcetrim) # trim guess
 
     if len(TrimWarning)>1:         
         st.error(TrimWarning)  
