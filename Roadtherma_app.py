@@ -397,7 +397,7 @@ df = st.session_state['uploaded_data']#gemmer denne dataframe til brug i resten 
 if config['reader'] == None:
     config['pixel_width']=''
 else:
-    if uploaded_file != None: # for default reader
+    if uploaded_file != None and len(df)>1: # for default reader
         r1,c1=df.shape
         
     else:
