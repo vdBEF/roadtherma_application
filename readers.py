@@ -105,6 +105,33 @@ def _read_Moba(filename):
     return df, str1#, res
     # return df
 
+def _read_ALL(filename):
+    # list_functions=[_read_all]
+    # for function in _read_all:
+        # try:
+            df, str1, res = _read_all(filename)
+            # print(t[0])
+            # df=t[0]
+            
+            # str1=t[1]
+            # res=t[2]
+            
+            # Finding nan rows and deleting them:
+            DL=[]
+            for i in range(len(df)):
+                if any(df.iloc[i].isna())==True:
+                    DL.append(i)
+            print(DL)           
+            df.drop(DL,inplace=True)  
+            
+        # except:
+            # pass
+        # else:
+            # raise Exception("No function succeeded.")
+    # else:
+    #     raise Exception("No function succeeded.")
+    #     str1="No function succeeded."
+            return df, str1#, res    
 
 
 #%% Voegele
@@ -714,14 +741,330 @@ def _read_moba3(filename):
     
     return df, str1, res   
 
+#%% ALL
 
+def _read_all(filename):
+
+    StartLine=0
+    try:
+        with open(filename, newline='') as f:    
+            Tcsv_reader = csv.reader(f)
+            for i in range(40):
+                line1 = next(Tcsv_reader)
+                # print(line)
+                StartLine=StartLine+1
+                for kk in line1:
+                    # if k.isnumeric():
+                    if kk.count('Time')==1 or kk.count('Tidspunkt')==1 or kk.count('Distance')==1 or kk.count('Time;')==1 or kk.count('Distance;')==1 or kk.count('time')==1 or kk.count('Stationing')==1:
+                        print(StartLine)
+                        print(kk)
+                        lline1=kk
+                       
+                       
+                        startline1=StartLine
+                        break
+    except:
+        print('Fail')        
+       
+    StartLine=0
+    try:
+        with open(filename, 'r') as f:
+            lineK=f.readlines()    
+            for i in range(40):
+                
+                line1=lineK[i]
+                
+                StartLine=StartLine+1
+                
+                if line1.count('Time')==1 or line1.count('Tidspunkt')==1 or line1.count('Distance')==1 or line1.count('Time;')==1 or line1.count('Distance;')==1 or line1.count('time')==1 or line1.count('Stationing')==1:
+            
+                    print(StartLine)
+                    print(line1)
+                    lline=line1
+                    startline=StartLine
+                    # break
+                
+    except:
+        print('Fail')   
+
+    if startline>=startline1:
+        startline=startline
+    # lline=lline
+    else:
+        startline=startline1    
+        lline=lline1
+
+
+    with open(filename, newline='') as f:
+       Tcsv_reader = csv.reader(f)
+       for i in range(40):
+          line = next(Tcsv_reader)
+               
+       for k in line:   
+           if k.count('"')>=1:
+              q=0
+              DQ=True
+           else:    
+              q=csv.QUOTE_NONE
+              DQ=False
+     
+
+    with open(filename, newline='') as f:
+       # Tcsv_reader = csv.reader(f,delimiter='|')
+       delim2=''
+       try:
+           dialect = csv.Sniffer().sniff(f.read(1024))
+           delim=dialect.delimiter
+           delim2=delim
+       except:
+           if lline.count(';')>=1:
+               delim=';'
+           elif lline.count(',')>=1:
+               delim=','
+           else:
+               delim=','    
+      
+    if delim!=',' and delim!=';':
+       print('dialect fail')
+       if lline.count(';')>=1:
+           delim=';'
+       elif lline.count(',')>=1:
+           delim=','
+       else:
+           delim=delim2
+
+
+    with open(filename, 'r') as f:
+       lineK=f.readlines()
+
+    # if lineK[50].count('.')==3 and lineK[50].count(',')>50:
+    #    dec='.'
+    #    th=','
+    if lineK[50].count(';')>10 and delim==';' and lineK[50].count('.')>10:    
+        dec='.'
+        th=',' 
+
+    elif lineK[50].count(';')>10 and delim==';' and lineK[50].count(',')>10:    
+        dec=','
+        th='.'       
+    elif lineK[50].count(',')>lineK[50].count('.') and lineK[50].count(':')<=3:
+        dec='.'
+        th=','   
+    elif lineK[50].count(',')>lineK[50].count('.'):
+       dec=','
+       th='.'
+    else:
+       dec='.'
+       th=','
+
+
+    try:
+
+       ddf = pd.read_csv(filename, skiprows=startline+1,delimiter=delim,decimal=dec,quoting=q,doublequote=DQ, quotechar='"')     
+    except:
+       ddf = pd.read_csv(filename, skiprows=startline+1,encoding='cp1252',delimiter=delim,decimal=dec,quoting=q,doublequote=DQ,quotechar='"') 
+    r,c=ddf.shape
+
+    try:
+        condi=ddf.iloc[1][1].astype(str).count('"')>=2
+    except:
+        try:
+            condi=ddf.iloc[1][1].count('"')>=2
+        except:    
+            condi=ddf.iloc[1][0].count('"')>=2
+
+  
+    if c<2 or condi:
+       q=3
+       try:
+
+           ddf = pd.read_csv(filename, skiprows=startline+1,delimiter=delim,decimal=dec,quoting=q,doublequote=DQ, quotechar='"')     
+       except:
+           ddf = pd.read_csv(filename, skiprows=startline+1,encoding='cp1252',delimiter=delim,decimal=dec,quoting=q,doublequote=DQ,quotechar='"') 
+
+
+       r,c=ddf.shape
+
+    # r=len(lineK)-startline # måde at før nrows på uden at skulle loade det hele i ddf
+# Columns information
+
+    dis=re.search('dist|Dist|Stat|stat',lline)
+    tim=re.search('Tim|tim|Tids|tids',lline)   
+    lat=re.search('lat|Lat|Bred|bred',lline)
+    long=re.search('lon|Long|Læng|læng',lline)
+    sig=re.search('Signa|signa|qual|Qual',lline)
+    alt=re.search('Alti|alti',lline)
+    hum=re.search('Humi|humi',lline)
+    pre=re.search('Pres|pres',lline)
+    air=re.search('AirT|airt',lline)
+    win=re.search('Wind|wind',lline)
+    sat=re.search('Sate|sate',lline)
+    ind=re.search('Inde|inde',lline)
+    spe=re.search('Spee|Spee',lline)
+
+    NL=['distance']+ ['time']+['latitude']+['longitude']+['Signal quality']+['altitude']+['Humidity']+['Pressure']+['AirTemperature']+['WindSpeed']+['satellites']+['index']+['speed']
+
+    RF=[]
+    k=0
+    for i in [dis,tim,lat,long,sig,alt,hum,pre,air,win,sat,ind,spe]:
+    # k=k+1
+        try:
+            RF.append([NL[k],i.span(0)[0]])
+        except:
+            RF.append([NL[k],'Not used'])
+        k=k+1    
+
+    rf=[]
+    for i in range(len(RF)):
+        if RF[i][1]!='Not used':
+            rf.append(RF[i])
+    nb=[]
+    for i in range(len(rf)):
+        nb.append(rf[i][1])
+    
+    nb.sort()  
+
+    columnInfo=[]
+    for i in range(len(nb)):
+        for ii in range(len(rf)):
+            if nb[i]==rf[ii][1]:
+                columnInfo.append(rf[ii][0])
+
+    
+
+    rows = 1
+    for i in range(ddf.index.size):
+        if pd.notna(ddf.loc[ddf.index[i]][12])==True:
+            rows += 1
+     # elif ddf.index[i].isdigit() is True:
+     #        rows += 1
+        else:
+            rows +=1
+        
+            break
+    print(rows)       
+    
+    temperatures_col = ['T{}'.format(n) for n in range(c)] 
+       
+    columns = columnInfo + temperatures_col
+    
+   
+    if c>100:
+           try:    
+               df = pd.read_csv(filename, skiprows=startline+1,delimiter=delim,decimal=dec,thousands=th,names=columns)
+           # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands='.',decimal=',')
+           except:
+           # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands=',',decimal='.')
+               df = pd.read_csv(filename, skiprows=startline+1,encoding='cp1252',delimiter=delim,decimal=dec,thousands=th,names=columns) 
+
+
+    else:
+           try:    
+               df = pd.read_csv(filename, skiprows=startline,delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"', nrows=rows)
+           # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands='.',decimal=',')
+           except:
+           # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands=',',decimal='.')
+               df = pd.read_csv(filename, skiprows=startline,encoding='cp1252',delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"',nrows=rows) 
+
+    for col in df.columns:
+        if all(df[col].isna())==True:
+            df=df.drop(columns=[col])
+
+
+    # if all(df[df.columns[-1]].isna())==True:
+    #         df=df.drop(columns=[df.columns[-1]])
+    #For moba 2 reader...
+    # if df.columns[-1]=='T36':
+    #     df=df.drop(columns=[df.columns[-1]])
+    #     df=df.drop(columns=[df.columns[-1]])
+    #     temperatures_col=temperatures_col[0:35]
+                
+        # print(df)
+        # print(df.columns)
+
+    #Definere ny temperatures_col, med korrekt antal T columns
+    temperatures_col=['T{}'.format(n) for n in range([x for x in ''.join(df.columns)].count('T'))]
+
+    if lline.count('"')>=1:
+            for col in set(temperatures_col) | {'distance', 'latitude', 'longitude'}:
+                try:
+                    try:
+                        df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
+                    except:
+                    
+                        df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+                except:
+                    try:
+                        df.replace('""',np.nan,inplace=True)
+                        df[col] = df[col].astype('str').apply(lambda x:x.strip('"')).astype('float')
+                    except:
+                        df.replace('""',np.nan,inplace=True)
+                        df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
+
+    
+    if lline[0:40].count('dd.MM.yyyy HH:mm:ss')==1:
+            df['time']=pd.to_datetime(df.time, format='mixed')# format='%d.%m.%Y%H:%M:%S')
+    elif lline.count('Time stamp')==1:
+        df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')
+        print('Moba time...')
+    elif line[0].count('UTC')==0:        
+            df['time']=[x.replace(' ','') for x in df.time]
+            # df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')    
+            df['time'] = pd.to_datetime(df.time, format="mixed")
+            
+
+            
+    else:
+            df['time'] = df['time'].astype('str').apply(lambda x:x.strip('"'))
+            try:
+                df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
+                # df['time'] = pd.to_datetime(df.time, format="mixed")
+            except:
+                df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 02:00")
+                # df['time'] = pd.to_datetime(df.time, format="dayfirst mixed")
+       
+    DL=[]
+    for row in df.index:
+        if any(df.iloc[row]=='Invalid')==True:
+            DL.append(row)
+    df=df.drop(index=DL)
+    df.reset_index(drop=True,inplace=True)   
+
+    try:
+        for n in range([x for x in ''.join(df.columns)].count('T')):
+            df['T{}'.format(n)] =pd.to_numeric(df['T{}'.format(n)])
+    except:
+        for n in range([x for x in ''.join(df.columns)].count('T')-1):
+            df['T{}'.format(n)] =pd.to_numeric(df['T{}'.format(n)])
+    
+    str2=[]
+    str2=len(df)
+   # dftest=df.copy()    
+    # for n in range(len(temperatures_col)-1):
+    for n in range([x for x in ''.join(df.columns)].count('T')-1):    
+       # print(df[df['T{}'.format(n)] > 1000])
+       df = df.drop(df[df['T{}'.format(n)] > 1000].index)
+       df=df.reset_index(drop=True)
+       # str1 =
+    res=str2-len(df) 
+    if    res >=1 :
+           #res virker ikke...
+       str1="\n"+str(res)+" Row(s) removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+       # str1="Rows are removed because temperatures > 1000\N{DEGREE SIGN}C \n"
+    else:
+       str1="\nAll data used (T<1000\N{DEGREE SIGN}C) \n"            
+
+
+
+    return df, str1, res
 
 
 #%% 
 readers = {
         'Voegele':_read_Voegele,
         'TF':_read_TF,
-        'Moba':_read_Moba,}
+        'Moba':_read_Moba,
+        'Default':_read_ALL}
         # 'Voegele_1':_read_voegele_1,
         # 'Voegele_2':_read_voegele_2,
         # 'TF_old':_read_TF_old,
