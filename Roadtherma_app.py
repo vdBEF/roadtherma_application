@@ -743,7 +743,8 @@ st.subheader('Statistics')
 if run_script_checkbox == False: # If the analysis is not completed the statistics calculation and plot can not be toggled
     
     config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled'], disabled=True) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
-    PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
+    #PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
+    PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist') # only for test
 else:
 
     config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). OBS: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
