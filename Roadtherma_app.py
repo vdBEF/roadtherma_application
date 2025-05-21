@@ -474,10 +474,10 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     #st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
 
     st.write('')
-    st.write('Toggle to deactivate:')
-    Twolane=st.toggle('Two paved lanes in the data', value=False)
+    #st.write('Toggle to deactivate:')
+    Twolane=st.toggle('Two paved lanes in the data', value=False,help='Toggle to deactivate twolane autotrim.')
     # st.write('')
-    ForceTrim=st.toggle('Force autotrim to run', value=False)   
+    ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')   
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
