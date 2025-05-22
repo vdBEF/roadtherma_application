@@ -744,12 +744,12 @@ st.subheader('Statistics')
 #Der laves to seperate figurer således at den tidskrævende del kan vælges fra
 
 if run_script_checkbox == False: # If the analysis is not completed the statistics calculation and plot can not be toggled
-    
+    st.write('Percentage high gradient as a function of tolerance and distribution of temperatures')
     #config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled'], disabled=True) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
-    config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics. for test only
-    PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
+    #config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics. for test only
+    #PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist', disabled=True)
     #PLD=st.toggle('Plot distribution of temperatures', value=False, key='plot_temp_dist') # only for test
-else:
+elif run_script_checkbox ==True and run_trimming_checkbox==True:
 
     config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). OBS: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
     if config['gradient_statistics_enabled']:
