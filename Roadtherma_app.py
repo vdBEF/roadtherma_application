@@ -480,7 +480,8 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
 
     st.write('')
     #st.write('Toggle to deactivate:')
-    Twolane=st.toggle('Two paved lanes in the data', value=False,help='Toggle to deactivate twolane autotrim.')
+    st.write('Autotrim options:')
+    Twolane=st.toggle('Normal autotrim', value=False,help='Toggle to deactivate twolane autotrim.')
     # st.write('')
     ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')   
     if st.session_state.overwritepixel==True:
