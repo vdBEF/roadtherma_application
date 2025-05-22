@@ -210,7 +210,7 @@ def interpolate_roller_pixels(temperature_pixels, roller_pixels, road_pixels):
     temperature_pixels[points_interpolate] = np.mean(temperature_pixels[points])
 
 
-def trimguess(temperatures, config, TwoLane, ForceTrim):    
+def trimguess(temperatures, config, TwoLane, ForceTrim, Less):    
 
     autotrim1=1
     if autotrim1==1:
@@ -268,6 +268,8 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
         p2=0
         p3=0
         p4=0
+    
+
         
         cond1=(Temp1.count()).iloc[n+1]>500
         if (config['pixel_width']==0.25):
@@ -292,7 +294,15 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
         print('cond',cond)
         print('cond1',cond1)
         print('cond2',cond2)
-        if abs(StartTrim-EndTrim)>5 and (TwoLane==False and ((cond==True and cond2==True) or (ForceTrim==True))):# or (cond1==True and cond2==True)):
+        if ForceTrim==True:
+            wd=0
+        else:
+            wd=5
+        if Less==True:
+            LK=0.8
+        else:
+            LK=1
+        if abs(StartTrim-EndTrim)>wd and (TwoLane==False and ((cond==True and cond2==True) or (ForceTrim==True))):# or (cond1==True and cond2==True)):
         # if TwoLane==False: #and ((cond==True and cond2==True) or (ForceTrim==True))) # Always turned on
 
             pp=0
@@ -331,10 +341,10 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
                 nnT=nT
                 print('nT',nT)
                 LL=Temp2.mean()[Temp2.mean()>50].mean()
-         
+                LL=LL*LK
                 for p in range(100):
                         l=p    
-                        if abs(TT.iloc[(ii+p)])>LLN:
+                        if abs(TT.iloc[(ii+p)])>LL:
 
                             if TT.iloc[(ii+p)]<LL:
    
@@ -397,7 +407,7 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
                 kkT=kT
                 # print('start kT',kT)
                 LL=Temp2.mean()[Temp2.mean()>50].mean()
-                
+                LL=LL*LK
                 # print('abs(TT.iloc[kT])',abs(TT.iloc[kT]),kT)
                 for p in range(1,150,1):
 
