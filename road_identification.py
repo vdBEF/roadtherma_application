@@ -422,9 +422,9 @@ def trimguess(temperatures, config, TwoLane, ForceTrim):
                             #     break
                             # l=l-2
                             if len(TT)-kkkT+2>=nT:
-                                rr=nT-1
+                                rr=nT-5
                             else:
-                                rr=len(TT)-kkkT+2
+                                rr=len(TT)-(kkkT+5)
                             for p in range(rr):
                                 print('abs(TT.iloc[kkkT-(p+2)])',abs(TT.iloc[kkkT-(p+2)]),kkkT-(p+2))
                                 if abs(TT.iloc[(kkkT-(p+2))])<LL: 
