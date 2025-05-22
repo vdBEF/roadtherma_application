@@ -747,7 +747,7 @@ def _read_all(filename):
 
     StartLine=0
     try:
-        with open(filename, newline='') as f:    
+        with open(filename, newline='',encoding='cp1252') as f:    
             Tcsv_reader = csv.reader(f)
             for i in range(40):
                 line1 = next(Tcsv_reader)
@@ -769,7 +769,7 @@ def _read_all(filename):
     print('111111111111111')   
     StartLine=0
     try:
-        with open(filename, 'r') as f:
+        with open(filename, 'r',encoding='cp1252') as f:
             lineK=f.readlines()
             print(lineK)
             for i in range(40):
