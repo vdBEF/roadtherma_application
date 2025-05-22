@@ -728,6 +728,7 @@ elif uploaded_file != None and config['reader'] != None  :
     st.warning('Trim data first') 
 #%% analyse efter moving average er udført 
 st.divider()
+#if run_script_checkbox == False or run_trimming_checkbox==False:
 st.subheader('Statistics')
 # if run_script_checkbox: 
 #     # Plot statistics in relating to the gradient detection algorithm
@@ -743,7 +744,7 @@ st.subheader('Statistics')
 
 #Der laves to seperate figurer således at den tidskrævende del kan vælges fra
 
-if run_script_checkbox == False: # If the analysis is not completed the statistics calculation and plot can not be toggled
+if run_script_checkbox == False or run_trimming_checkbox==False and uploaded_file != None: # If the analysis is not completed the statistics calculation and plot can not be toggled
     st.write('Percentage high gradient as a function of tolerance and distribution of temperatures')
     #config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled'], disabled=True) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics
     #config['gradient_statistics_enabled'] = st.toggle('Plot percentage high gradient as a function of tolerance (gradient_statistics_enabled). Note: this is quite time consuming', value=config_default_values['gradient_statistics_enabled']) #gradient_statistics_enabled: True # Whether or not to calculate and plot gradient statistics. for test only
