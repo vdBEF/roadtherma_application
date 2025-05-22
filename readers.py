@@ -797,7 +797,7 @@ def _read_all(filename):
         lline=lline1
 
 
-    with open(filename, newline='') as f:
+    with open(filename, newline='',encoding='cp1252') as f:
        Tcsv_reader = csv.reader(f)
        for i in range(40):
           line = next(Tcsv_reader)
@@ -811,7 +811,7 @@ def _read_all(filename):
               DQ=False
      
 
-    with open(filename, newline='') as f:
+    with open(filename, newline='',encoding='cp1252') as f:
        # Tcsv_reader = csv.reader(f,delimiter='|')
        delim2=''
        try:
@@ -836,7 +836,7 @@ def _read_all(filename):
            delim=delim2
 
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r',encoding='cp1252') as f:
        lineK=f.readlines()
 
     # if lineK[50].count('.')==3 and lineK[50].count(',')>50:
