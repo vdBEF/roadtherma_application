@@ -353,7 +353,7 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less):
                                 nnnT=nnT+l
 
                         
-                            else: #TT.iloc[(ii+1)]<TT.iloc[(ii+2)]:
+                            else: 
                                nT=nnT+l
  
                                if len(TT)>200 and (n<=5 or len(TrimWarning)>0):
@@ -373,32 +373,32 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less):
                                break    
                     # break    
                     
-                if n-nT<=5 and n<=2 and len(TT)>200:
-                    print('LL*1.2') 
-                    for p in range(100):
+                #if n-nT<=5 and n<=2 and len(TT)>200:
+                 #   print('LL*1.2') 
+                  #  for p in range(100):
 
-                        l=p
-                        if abs(TT.iloc[(ii+p)])>LLN :
+                   #     l=p
+                    #    if abs(TT.iloc[(ii+p)])>LLN :
 
-                            if TT.iloc[(ii+p)]<LL+2:
+                     #       if TT.iloc[(ii+p)]<LL+2:
                            
-                                print('l',l)
-                                nT=nnT+l
+                      #          print('l',l)
+                        #        nT=nnT+l
 
-                            else: #TT.iloc[(ii+1)]<TT.iloc[(ii+2)]:
-                              nT=nnT+l
+                       #     else: #TT.iloc[(ii+1)]<TT.iloc[(ii+2)]:
+                         #     nT=nnT+l
 
-                              if len(TT)>200 and (n<=5 or len(TrimWarning)>0):
-                                    nT=nnT+l-4
-                                    print('TF nT',nT)
-                                    print('LL',LL)
-                                    break
-                              else:
-                                    nT=nnT+l-1
-                                    print('nT',nT)
-                                    print('LL',LL)
-                                    break
-                              break 
+                          #    if len(TT)>200 and (n<=5 or len(TrimWarning)>0):
+                           #         nT=nnT+l-4
+                            #        print('TF nT',nT)
+                             #       print('LL',LL)
+                              #      break
+                              #else:
+                               #     nT=nnT+l-1
+                                #    print('nT',nT)
+                                 #   print('LL',LL)
+                                  #  break
+                              #break 
   
      
                 kkkT=len(TT)-1
@@ -438,8 +438,9 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less):
                             for p in range(rr):
                                 print('abs(TT.iloc[kkkT-(p+2)])',abs(TT.iloc[kkkT-(p+2)]),kkkT-(p+2))
                                 if abs(TT.iloc[(kkkT-(p+2))])<LL: 
-                                    kT=kkkT-p
-                                    break
+                                    kT=kkkT-(p+2)
+                                    if abs(TT.iloc[kT+2])>LL:
+                                        break
                             
                             
                             if len(TT)>200 and (k>=270 or len(TrimWarning)>0):
