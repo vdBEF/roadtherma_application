@@ -480,7 +480,7 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less):
                     # EndTrim=(k+1)*config['pixel_width']
                 
                 elif config['pixel_width']==0.03:
-                   if nT-n<15 and nT>n and nT>30: 
+                    if nT-n<15 and nT>n and nT>30: 
                         n=n
                         StartTrim=round((n-4)*config['pixel_width'],2)
                         
