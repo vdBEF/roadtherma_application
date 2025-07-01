@@ -329,7 +329,7 @@ if st.session_state.count != st.session_state.count_new:
                     st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
             # st.write(additional_text)
             # print(additional_text)
-            name = st.session_state.uploadFile.name # 010725 for paving info i result file
+                    name = st.session_state.uploadFile.name # 010725 for paving info i result file
             else:
                 st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
                 config['input data'] = st.session_state.uploadFile.name
