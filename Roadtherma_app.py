@@ -454,7 +454,7 @@ if uploaded_file != None and len((name).split('_'))<8 :
                 PositionofP=st.text_input("The pavers number", 'Ex: 1',help='Write the number chosen for the paver. This should be 1 if there is only 1.', width=200)
              
             st.session_state.uploadFile.name=Mixtype+'_'+Date+'_'+Con+'_'+Device+'_'+Entr+'_'+RoadID+'_'+RoadSeg+'_'+NumberofP+'_'+PositionofP+'.csv'
-            st.session_state.uploadFile.name=re.sub('Ex:','',st.session_state.uploadFile.name)
+            st.session_state.uploadFile.name=re.sub('Ex: ','',st.session_state.uploadFile.name)
 name=None # 010725
 
 road_pixels=[0]
