@@ -240,6 +240,7 @@ def counter_func():
 
 col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
+name=''
 #additional_text='' #starter med en tom
 #navnene på alle readers i readers.py gemmes her så de kan vælges
 reader_list = ['Voegele', 'TF','Moba','Default']
@@ -328,7 +329,7 @@ if st.session_state.count != st.session_state.count_new:
                     st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
             # st.write(additional_text)
             # print(additional_text)
-            
+            name = st.session_state.uploadFile.name # 010725 for paving info i result file
             else:
                 st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
                 config['input data'] = st.session_state.uploadFile.name
@@ -431,6 +432,30 @@ if config['reader'] != None and uploaded_file != None and df.distance.iloc[-1]<2
 else:
     st.write(st.session_state['info_data'])
 
+# 010725 Added to write file name info directly in the app and not in the filename, paving info in result file
+if uploaded_file != None and len((name).split('_'))<8 :
+        h1='Information for the result-file about the paving. This is not necessary for a result.'
+        WriteInfo = st.toggle("Toggle to write infomation", help=h1)
+        if WriteInfo:
+            col3, col4, col5 = st.columns(3)
+            with col3:
+                Mixtype = st.text_input("Mix type", 'KVS',help='Normally KVS', width=200)
+                Date = st.text_input("Date", 'Ex: 20250615',help='Date of the paving', width=200)
+                Con = st.text_input("Contractor", 'Ex: PEAB',help='Name of the contractor', width=200)
+               
+            with col4:
+                Device = st.text_input("Camera device", 'Ex: Vog',help='Name of the camera type. This can be Vog, TF, or Moba', width=200)
+                Entr = st.text_input("Entreprise number", 'Ex: Entr50',help='Write Entr and then the number as in the example', width=200)
+                RoadID=st.text_input("Road ID", 'Ex: M80',help='Write the road ID either M or Hldv followed by the number as shown in the example', width=200)
+                
+            with col5:
+                RoadSeg=st.text_input("Road segment", 'Ex: Hoved',help='Write the road segment either Hoved or Rampe', width=200)
+                NumberofP=st.text_input("Number of paver", 'Ex: 1ud',help='Write the number of pavers followed by "ud"', width=200)
+                PositionofP=st.text_input("The pavers number", 'Ex: 1',help='Write the number chosen for the paver. This should be 1 if there is only 1.', width=200)
+             
+            st.session_state.uploadFile.name=Mixtype+'_'+Date+'_'+Con+'_'+Device+'_'+Entr+'_'+RoadID+'_'+RoadSeg+'_'+NumberofP+'_'+PositionofP+'.csv'
+            st.session_state.uploadFile.name=re.sub('Ex:','',st.session_state.uploadFile.name)
+name=None # 010725
 
 road_pixels=[0]
 
