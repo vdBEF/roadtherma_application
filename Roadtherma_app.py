@@ -240,7 +240,7 @@ def counter_func():
 
 col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
-name=''
+
 #additional_text='' #starter med en tom
 #navnene på alle readers i readers.py gemmes her så de kan vælges
 reader_list = ['Voegele', 'TF','Moba','Default']
@@ -329,7 +329,7 @@ if st.session_state.count != st.session_state.count_new:
                     st.session_state['uploaded_data'], st.session_state['info_data'] = load_data(uploaded_file, config['reader'])
             # st.write(additional_text)
             # print(additional_text)
-                name = st.session_state.uploadFile.name # 010725 for paving info i result file
+                
             else:
                 st.session_state['uploaded_data'] = load_data(uploaded_file, config['reader'])
                 config['input data'] = st.session_state.uploadFile.name
@@ -433,7 +433,8 @@ else:
     st.write(st.session_state['info_data'])
 
 # 010725 Added to write file name info directly in the app and not in the filename, paving info in result file
-if uploaded_file != None and len((name).split('_'))<8 :
+if uploaded_file != None:
+    if len(st.session_state.uploadFile.name.split('_'))<9:        
         h1='Information for the result-file about the paving. This is not necessary for a result.'
         WriteInfo = st.toggle("Toggle to write infomation", help=h1)
         if WriteInfo:
@@ -455,7 +456,7 @@ if uploaded_file != None and len((name).split('_'))<8 :
              
             st.session_state.uploadFile.name=Mixtype+'_'+Date+'_'+Con+'_'+Device+'_'+Entr+'_'+RoadID+'_'+RoadSeg+'_'+NumberofP+'_'+PositionofP+'.csv'
             st.session_state.uploadFile.name=re.sub('Ex: ','',st.session_state.uploadFile.name)
-name=None # 010725
+
 
 road_pixels=[0]
 
