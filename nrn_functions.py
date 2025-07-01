@@ -258,6 +258,11 @@ def summary_as_MAP(temperatures_trimmed, road_pixels, moving_average_pixels, fil
     
     #gemmer som MAP output
     a = filename[:-4].split('_')
+
+    if len(a)<8: # Added - 010725 to not get a error when not using correct filenaming
+        a='MixtypeX_DateX_ContractorX_DeviceX_EntrX_RoadIDX_XX_XX_XX'.split('_')
+
+    
     summary_df = pd.DataFrame({'Entreprise':a[4], 'Contractor':a[2], 'Mix Type':a[0],
                                'Road ID':a[5], 'Date':a[1], 'Device':a[3],
                                'Number of Pavers':a[7], 'Position of Paver':a[8],
