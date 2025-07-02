@@ -400,8 +400,11 @@ if config['reader'] == None:
 else:
     if uploaded_file != None: # for default reader
         print(df)
-        r1,c1=df.shape
-        
+        try:
+            r1,c1=df.shape
+        except:
+            r1=0
+            c1=0
     else:
         c1=0
         r1=0
@@ -459,6 +462,21 @@ if uploaded_file != None:
 
 
 road_pixels=[0]
+
+# added 020725 Map of paved area.
+if uploaded_file!=None:    
+    Map = st.toggle("Toggle to get a map of the paving", help='Shows a map of the paved road based on the points from the data file')
+
+    if Map:
+    # if uploaded_file!=None:
+        try:
+            print('Map')
+            figMap = px.scatter_map(df, lat="latitude", lon="longitude", map_style="open-street-map") # map types: "satellite-streets","satellite","open-street-map", "streets"
+            st.plotly_chart(figMap)    
+        except:
+            st.error('Something went wrong. The map can not be created')
+
+
 
 st.divider()
 ### Herunder kører hele programmet ##############
