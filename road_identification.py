@@ -210,7 +210,7 @@ def interpolate_roller_pixels(temperature_pixels, roller_pixels, road_pixels):
     temperature_pixels[points_interpolate] = np.mean(temperature_pixels[points])
 
 
-def trimguess(temperatures, config, TwoLane, ForceTrim, Less):    
+def trimguess(temperatures, config, TwoLane, ForceTrim, Less, High):    
 
     autotrim1=1
     if autotrim1==1:
@@ -300,6 +300,8 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less):
             wd=5
         if Less==True:
             LK=0.8
+        if High==True
+            LK=1.025
         else:
             LK=1
         if abs(StartTrim-EndTrim)>wd and (TwoLane==False and ((cond==True and cond2==True) or (ForceTrim==True))):# or (cond1==True and cond2==True)):
