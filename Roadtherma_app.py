@@ -254,7 +254,7 @@ c1=0
 #with col1:
     #st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.*] ')
  #   config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',
-                                    on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
+                                    #on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
     
      #config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
      #                               on_change=counter_func )
