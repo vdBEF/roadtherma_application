@@ -261,8 +261,7 @@ c1=0
     # config['reader'] = st.selectbox('Choose which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
     #                                 on_change=counter_func )
 # st.info('You have to choose a camera type before data is loaded')    
-config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',
-                                    on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
+config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader', on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
