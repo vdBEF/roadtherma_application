@@ -544,7 +544,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     # st.write(temperatures)#plot af dataframe
     st.write('')
     with st.spinner("Autotrimming data..."): 
-        StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config, Twolane ,ForceTrim,Less, High) # trim guess
+        StartTrim, EndTrim, TrimWarning=trimguess(temperatures, config, Twolane ,ForceTrim, Less, High) # trim guess
 
     if len(TrimWarning)>1:         
         st.error(TrimWarning)  
