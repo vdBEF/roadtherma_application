@@ -299,8 +299,8 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less, High):
         else:
             wd=5
         if Less==True:
-            LK=0.6 # test normal 0.8
-        if High==True:
+            LK=0.8 # test normal 0.8
+        elif High==True:
             LK=1.025
         else:
             LK=1
