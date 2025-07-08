@@ -525,7 +525,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     st.write('')
     #st.write('Toggle to deactivate:')
     #st.write('Autotrim options:')
-    with st.popover('See more autotrim options):
+    with st.popover('See more autotrim options'):
         Twolane=st.toggle('Normal autotrim', value=False,help='Toggle to deactivate twolane autotrim.')
     # st.write('')
         ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')
