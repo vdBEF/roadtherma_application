@@ -500,7 +500,7 @@ else:
     #run_trimming_checkbox = st.checkbox('Press to start trimming data')
     run_trimming_checkbox = st.checkbox('Press to start trimming data', key='RunTrim')
 # Showing the automatic chosen pixel width dependent on the camera type
-if config['reader'] != None and uploaded_file != None:
+if config['reader'] != None and uploaded_file != None and run_trimming_checkbox==True:
     st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
     # # A manual method of choosing pixel width if the standard method is no working.
     st.toggle('Manually choose pixel width ', value=False, key='overwritepixel')
