@@ -1013,6 +1013,7 @@ def _read_all(filename):
             df['time']=[x.replace(' ','') for x in df.time]
             # df['time'] = pd.to_datetime(df.time, format='%H:%M:%S')    
             df['time'] = pd.to_datetime(df.time, format="mixed")
+            df['time'] =pd.to_datetime(df['time'],format).apply(lambda x: x.time()) # added 080725 to remove the date part of the datetime format.
             
 
             
