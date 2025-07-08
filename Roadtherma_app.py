@@ -819,7 +819,7 @@ st.subheader('post analysis')
 if uploaded_file == None or config['reader'] == None:
     #st.warning('No data has been processed yet')
     #st.warning('Upload data and choose a reader to get the results')
-    st.warning('Select a file and a reader, then start the analysis to get the results')
+    st.warning('Upload and trim a file, then start the analysis to get the results')
 elif run_script_checkbox and uploaded_file != None and config['reader'] != None:
     # DET MATTEOS SCRIPT GØR 
     #counting nuber of pixels in the road
