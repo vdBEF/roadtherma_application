@@ -524,12 +524,13 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
 
     st.write('')
     #st.write('Toggle to deactivate:')
-    st.write('Autotrim options:')
-    Twolane=st.toggle('Normal autotrim', value=False,help='Toggle to deactivate twolane autotrim.')
+    #st.write('Autotrim options:')
+    with st.popover('See more autotrim options):
+        Twolane=st.toggle('Normal autotrim', value=False,help='Toggle to deactivate twolane autotrim.')
     # st.write('')
-    ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')
-    Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
-    High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.') 
+        ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')
+        Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
+        High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.') 
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
