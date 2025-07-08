@@ -251,27 +251,29 @@ c1=0
 # reader_list = ['voegele_M30','TF_time_K', 'voegele_example','voegele_M119', 'voegele_taulov','TF_old',
 #                'TF_new', 'TF_notime','TF_time', 'TF_time_new','moba','moba2','moba3']
                
-with col1:
+#with col1:
     #st.markdown(':red[*If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.*] ')
-    config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',
+ #   config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',
                                     on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
-    #config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
+    
+     #config['reader'] = st.selectbox('Choose a camera type', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
      #                               on_change=counter_func )
     # config['reader'] = st.selectbox('Choose which camera type that was used', reader_list,index=None, placeholder="Choose an option",key='reader',#['voegele_M30','TF_time_K']
     #                                 on_change=counter_func )
 # st.info('You have to choose a camera type before data is loaded')    
-
+config['reader'] = st.selectbox('Choose a camera type if "Default" does not work', reader_list,index=3, placeholder="Choose an option",key='reader',
+                                    on_change=counter_func, help='If the camera type does not work write to Roadtherma@vd.dk, with the type of camera and include the file.' )
 
 #herunder oploades data
 if 'uploaded_data' not in st.session_state: #starter med at være tom
     st.session_state['uploaded_data']=None
     st.session_state['info_data']=''
-with col2:
-    st.write('Input file must be a csv file. If this is not the case, change it manually.')
+#with col2:
+    #st.write('Input file must be a csv file. If this is not the case, change it manually.')
     # st.write('Input file must be a csv file and in uft-8 encoding. If this is not the case, change it manually.')
+    #uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
+uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func, help='Input file must be a csv file. If this is not the case, change it manually.' )
 
-    uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
-    
 #load den uploadede fil ind baseret på readers
 if st.session_state.count != st.session_state.count_new:
     # st.write('count er ikke lig count ny')
