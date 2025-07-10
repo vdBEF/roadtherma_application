@@ -273,6 +273,13 @@ if 'uploaded_data' not in st.session_state: #starter med at være tom
     #uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func )
 uploaded_file = st.file_uploader('Choose input file', key='uploadFile', on_change=counter_func, help='Input file must be a csv file. If this is not the case, change it manually.' )
 
+if st.session_state.count_new==st.session_state.count-1: # 270625 - uncheck trim og analysis if a file is uploaded without removing the file loaded before
+        st.session_state['RunCode']=False # 
+        st.session_state['RunTrim']=False # 
+        st.session_state['AD']=False # 
+
+
+
 #load den uploadede fil ind baseret på readers
 if st.session_state.count != st.session_state.count_new:
     # st.write('count er ikke lig count ny')
