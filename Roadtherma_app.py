@@ -236,7 +236,7 @@ def counter_func():
     #funktion der tæller hvis der er ændret i reader eller file upload.
     #denne bruges sammen med on_change således at der tælles hvis der ændres i disse widgets
     st.session_state.count = st.session_state.count+1
-    return 
+    return st.session_state.count
 
 col1, col2 = st.columns(2)
 config['reader'] = None #starter med en tom
