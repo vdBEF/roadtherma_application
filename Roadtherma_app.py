@@ -704,6 +704,7 @@ if run_script_checkbox and uploaded_file != None and config['reader'] != None an
     #Her regnes og sammenlignes med moving average af arealet rindt om hver pixel
     # print(trim)
     st.session_state.count=st.session_state.count+1
+    st.session_state.count_new=st.session_state.count_new+1 # 110725
     moving_average_pixels = detect_temperatures_below_moving_average(
         temperatures_trimmed,
         road_pixels,
