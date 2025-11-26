@@ -288,9 +288,15 @@ def _read_voegele_2(filename):
         print(df)
     if len(dfT.loc[0][0])==31:
         try:
-            df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
+            try:
+                df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 02:00")
+            except:
+                df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 01:00")
         except:
-            df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 02:00")
+            try:    
+                df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 02:00")
+            except:
+                df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 01:00")
             # print(df.dtypes)
     elif BL2==True:
         try:
@@ -1119,4 +1125,5 @@ readers = {
 
 # filename='C:\\Users\\B306460\\Downloads\\14822232_20240602_082418_-_Udleagningstemperatur-24_06_03-UTC+02_00.csv'
 # df,str1=_read_Voegele(filename)
+
 
