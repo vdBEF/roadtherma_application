@@ -226,14 +226,21 @@ def _read_voegele_2(filename):
     columns = VOEGELE_BASE_COLUMNS + ['signal_quality'] + temperatures_voegele
     try:
         dfT = pd.read_csv(filename,delimiter=';',skiprows=5,nrows=10)
+        BL=any("," in s for s in re.findall(',',str(dfT.iloc[0,1])))
     except UnicodeDecodeError:
         dfT = pd.read_csv(filename,delimiter=';',encoding='cp1252',skiprows=5,nrows=10)
-    if  bool(re.search('"',str(dfT.loc[0][0])))==True:
+        BL=any("," in s for s in re.findall(',',str(dfT.iloc[0])))
+        
+    if  any('"' in s for s in re.findall('"',dfT.iloc[0,0]))==True:#bool(re.search('"',str(dfT.loc[0][0])))==True:
         for col in dfT.columns:
             dfT[col] = dfT[col].apply(lambda x:x.strip('"'))
     print(dfT)
-
-    if bool(re.search(',',str(dfT.loc[0][1])))==True:
+    try: 
+        BL2=any("." in s for s in re.findall('.',str(dfT.iloc[0,7])))
+    except:
+        BL2=any("." in s for s in re.findall('.',str(dfT.iloc[0])))
+    
+    if BL==True and BL2==False:#bool(re.search(',',str(dfT.loc[0][1])))==True:
         try:            
             df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',quoting=csv.QUOTE_NONE)
             print(df)
@@ -242,7 +249,18 @@ def _read_voegele_2(filename):
             df = pd.read_csv(filename, skiprows=2, delimiter=';', names=columns, decimal=',',encoding='cp1252',quoting=csv.QUOTE_NONE) #encoding='cp1252'
             print(df)
             f=1
-        for col in df.columns:
+    elif BL==True and BL2==True:
+        try:            
+            df = pd.read_csv(filename, skiprows=2, delimiter=',', names=columns, decimal='.',quoting=csv.QUOTE_NONE)
+            print(df)
+            f=1
+        except:
+            df = pd.read_csv(filename, skiprows=2, delimiter=',', names=columns, decimal='.',encoding='cp1252',quoting=csv.QUOTE_NONE) #encoding='cp1252'
+            print(df)
+            f=1
+            
+        
+    for col in df.columns:
             if col in {'distance', 'latitude', 'longitude'}|set(temperatures_voegele):
                try: 
                    df[col] = df[col].astype('str').apply(lambda x:x.strip('"'))
@@ -274,7 +292,13 @@ def _read_voegele_2(filename):
         except:
             df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 02:00")
             # print(df.dtypes)
-        
+    elif BL2==True:
+        try:
+            print(11)
+            df['time'] = pd.to_datetime(df.time, format="%d-%m-%Y %H:%M:%S UTC + 01:00")
+        except:
+            print(1)
+            df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S UTC + 01:00")   
     else:
         df['time'] = pd.to_datetime(df.time, format="%d/%m/%Y %H:%M:%S")
     # str1="\n All data used \n"
@@ -1095,3 +1119,4 @@ readers = {
 
 # filename='C:\\Users\\B306460\\Downloads\\14822232_20240602_082418_-_Udleagningstemperatur-24_06_03-UTC+02_00.csv'
 # df,str1=_read_Voegele(filename)
+
