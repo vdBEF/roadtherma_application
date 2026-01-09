@@ -992,11 +992,11 @@ def _read_all(filename):
 
     else:
            try:    
-               df = pd.read_csv(filename, skiprows=startline,delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"', nrows=rows)
+               df = pd.read_csv(filename, skiprows=startline,delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"', nrows=rows+1)
            # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands='.',decimal=',')
            except:
            # df = pd.read_csv(filename, skiprows=5, delimiter=';', names=columns,thousands=',',decimal='.')
-               df = pd.read_csv(filename, skiprows=startline,encoding='cp1252',delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"',nrows=rows) 
+               df = pd.read_csv(filename, skiprows=startline,encoding='cp1252',delimiter=delim,decimal=dec,thousands=th,names=columns,quoting=q,doublequote=DQ, quotechar='"',nrows=rows+1) 
 
     for col in df.columns:
         if all(df[col].isna())==True:
@@ -1125,5 +1125,6 @@ readers = {
 
 # filename='C:\\Users\\B306460\\Downloads\\14822232_20240602_082418_-_Udleagningstemperatur-24_06_03-UTC+02_00.csv'
 # df,str1=_read_Voegele(filename)
+
 
 
