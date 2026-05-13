@@ -632,8 +632,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1/0.03-trim_result[0],L2/0.03-trim_result[0], B1, B2)
         else:
             temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1-config['pixel_width']*trim_result[0],L2-config['pixel_width']*trim_result[0], B1, B2)
-            # temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])),L2-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])), B1, B2)
-        
+           
         roadwidths=estimate_road_width(
             temperatures_trimmed.values,
             config['roadwidth_threshold'],
@@ -647,13 +646,13 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         B2=0      
         
     # print('TEMp_plot:',TEMP_PLOT)
-    print('temp',temperatures)    
-    print('StartTrim',StartTrim)
+    #print('temp',temperatures)    
+    #print('StartTrim',StartTrim)
     # print('RW',roadwidths)
-    print('Trim results',trim_result)
-    print('Trimmed data=',temperatures_trimmed)
+    #print('Trim results',trim_result)
+    #print('Trimmed data=',temperatures_trimmed)
     # print('Raodwidths=',roadwidths)
-    # temperatures.to_csv(r'K:\DT\BBM\BEF\JLB1\Termografi\2024\colorbar_test/temp_data_1.csv')
+   
     #-- herunder plottes rådata og trimmed data ud fra de parametre der sættes
     fig_heatmaps, (ax1, ax2) = plt.subplots(ncols=2, sharey = True)
     plt.suptitle('Raw data', fontsize=10)
@@ -675,50 +674,26 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
                 print('L1 line2 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2))
                 ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2.4),color='b' )
                 ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )
-            
-            
-            
-            
-            
+         
         if B2==1:
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2.4),color='b' )
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )  
         
         if B1==2:
-            # if config['pixel_width']==0.03: # virker ikke helt korrekt endnu...
-            #     print('L1 line1 (B1=2):',L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2))
-            #     print('L1 line2 (B1=2):',L1-(config['pixel_width']*(1*B1-2)-(0.25/config['pixel_width'])*config['pixel_width']/1.5))
-                # ax1.axvline(L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2),color='b' )  
-                # ax1.axvline(L1-(config['pixel_width']*(1*B1-2)-(0.25/config['pixel_width'])*config['pixel_width']/1.5),color='b' )
-            # else:
-                
-                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
-                ax1.axvline(L1-(config['pixel_width']*(B1-2)-1*config['pixel_width']/1.5),color='b' )
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
+            ax1.axvline(L1-(config['pixel_width']*(B1-2)-1*config['pixel_width']/1.5),color='b' )
            
-        if B1==3:
-            # if config['pixel_width']==0.03:
-            #     ax1.axvline(L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2),color='b' )  
-            #     ax1.axvline(L1-(config['pixel_width']*(1*B1-3)-3*(0.25/config['pixel_width'])*config['pixel_width']/1.5),color='b' )
-            # else:    
-                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
-                ax1.axvline(L1-(config['pixel_width']*(B1-3)-3*config['pixel_width']/2),color='b' )    
-        if B1==4:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
+        if B1==3: 
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
+            ax1.axvline(L1-(config['pixel_width']*(B1-3)-3*config['pixel_width']/2),color='b' )    
+        if B1==4:  
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-4)-5*config['pixel_width']/2),color='b' )    
-        if B1==5:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
+        if B1==5:  
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-5)-7*config['pixel_width']/2),color='b' )
             
-        if B1==6 and config['pixel_width']==0.03:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
+        if B1==6 and config['pixel_width']==0.03:  
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-6)-9*config['pixel_width']/2),color='b' )    
             
@@ -730,51 +705,30 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             ax1.axvline(L1-(config['pixel_width']*(B1-7)-11*config['pixel_width']/2),color='b' )       
             
         if B1==8 and config['pixel_width']==0.03:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-8)-13*config['pixel_width']/2),color='b' )    
         if B1==9 and config['pixel_width']==0.03:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-9)-15*config['pixel_width']/2),color='b' )    
         if B1==10 and config['pixel_width']==0.03:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-                
             ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
             ax1.axvline(L1-(config['pixel_width']*(B1-10)-17*config['pixel_width']/2),color='b' )     
             
             
             
         if B2==2:
-            # if config['pixel_width']==0.03:
-              
-            #     B2=B2*8 # ret til ovenfor
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
             ax1.axvline(L2-(config['pixel_width']*(B2-2)-config['pixel_width']/1.5),color='b' )
             
         if B2==3:
-            # if config['pixel_width']==0.03:
-                
-            #     B2=B2*8 # ret til ovenfor
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
             ax1.axvline(L2-(config['pixel_width']*(B2-3)-3*config['pixel_width']/2),color='b' )
             
         if B2==4:
-            # if config['pixel_width']==0.03:
-               
-            #     B2=B2*8 # ret til ovenfor
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
             ax1.axvline(L2-(config['pixel_width']*(B2-4)-5*config['pixel_width']/2),color='b' )   
             
         if B2==5:
-            # if config['pixel_width']==0.03:
-                
-            #     B2=B2*8 # ret til ovenfor
             ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
             ax1.axvline(L2-(config['pixel_width']*(B2-5)-7*config['pixel_width']/2),color='b' ) 
             
