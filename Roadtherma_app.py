@@ -610,7 +610,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         S1=3.0
         S2=6.0
     if coldlines==True:
-        with st.form(key='columns_in_form'):
+        with st.form(key='columns_in_form1'):
             c1, c2, c3, c4 = st.columns(4)
             with c1:
                 L1 = st.number_input('Point of the first line from the left', value=S1,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
