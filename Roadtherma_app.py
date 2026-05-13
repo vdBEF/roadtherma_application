@@ -39,7 +39,7 @@ from utils import split_temperature_data
 from export import temperature_to_csv, detections_to_csv, temperature_mean_to_csv, clusters_to_csv
 from plotting import plot_statistics, plot_detections, plot_cleaning_results, save_figures
 from clusters import create_cluster_dataframe
-from road_identification import clean_data, identify_roller_pixels, interpolate_roller_pixels, trimguess
+from road_identification import clean_data, identify_roller_pixels, interpolate_roller_pixels, trimguess,  ColdLine, estimate_road_width
 from detections import detect_high_gradient_pixels, detect_temperatures_below_moving_average
 from readers import readers
 from cli import _iter_segments
@@ -72,8 +72,10 @@ logo_image = Image.open('vdlogo_blaa.png')
 st.sidebar.image(logo_image, caption=None, width=250)
 
 ## VERSION af koden beskrives herunder. Printes nederst ##############
-current_version ='version 0.93 - JLB1 21-05-2025 - Twolane autotrim beta and default reader beta.' #det der skrives i configuration filen
+current_version ='version 0.94 - JLB1 13-05-2026 - Twolane autotrim beta and default reader and Coldline trim beta' #det der skrives i configuration filen
 versions_log_txt = '''
+
+version 0.94 - JLB1 13-05-2026 - Twolane autotrim beta and default reader and Coldline trim beta
 
 version 0.93 - JLB1 21-05-2025 - Twolane autotrim beta and default reader beta
 
@@ -538,7 +540,8 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     # st.write('')
         ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')
         Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
-        High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.') 
+        High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.')
+        coldlines=st.toggle('Cold straight line in the data', value=False, help='Trying to remove cold lines') 
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
@@ -569,7 +572,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             config['manual_trim_longitudinal_start'] = st.number_input('manual_trim_longitudinal_start', value=0.0,step=1.0,min_value=0.0,max_value=99999.9)
         with c4:
             config['manual_trim_longitudinal_end'] = st.number_input('manual_trim_longitudinal_end', value=np.ceil(df.distance.iloc[-1]+1),step=1.0,min_value=0.0,max_value=99999.9)
-        submitButton = st.form_submit_button(label = 'Calculate') #når denne trykkes sendes de nye værdier til programmet
+        submitButton = st.form_submit_button(label = 'Calculate') #When pressed the new values is used.
     
 
     #Her deles dataframen ind i en df med temperatur data og en med resten af kolonnerne.
@@ -586,24 +589,262 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         st.error('Error in the data, possibly an empty row (nan). Remove the row by manually trimming or remove it from the file')
         sys.exit(1)
     
-    
+    if config['pixel_width']==0.03:    
+        maxpixel=10
+
+    else:    
+        maxpixel=5
+    # if EndTrim-StartTrim>7:
+    #    S1=4.0
+    #    S2=9.0
+    # else:
+    #     S1=3.0
+    #     S2=6.0
+    # if S1<StartTrim or S2>EndTrim:    
+    #     S1=StartTrim+1
+    #     S2=EndTrim-1
+    if EndTrim-StartTrim>2:    
+        S1=StartTrim+2
+        S2=EndTrim-2    
+    else:
+        S1=3.0
+        S2=6.0
+    if coldlines==True:
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            L1 = st.number_input('Point of the first line from the left', value=S1,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
+        with c2:
+            L2 = st.number_input('Point of the second line from the left', value=S2,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
+        with c3:
+            B1 = st.number_input('Pixel width of the first line', value=1,step=1,min_value=1,max_value=maxpixel, help='It cut towards the left')
+        with c4: 
+            B2 = st.number_input('Pixel width of the second line', value=1,step=1,min_value=0,max_value=maxpixel, help='It cut towards the left. Set to 0 if there is only one line')
+        # submitButton1 = st.form_submit_button(label = 'Remove lines')
+        
+        
+        print('trim offset 1',L1-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])))
+        print('trim offset 2',L2-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])))
+        print('L1m',int((L1/config['pixel_width']-(temperatures.shape[1]-abs((trim_result[1]-trim_result[0]))))))
+        
+        print('L1m',int((L1/config['pixel_width']-trim_result[0])))
+        
+        if config['pixel_width']==0.03:
+            temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1/0.03-trim_result[0],L2/0.03-trim_result[0], B1, B2)
+        else:
+            temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1-config['pixel_width']*trim_result[0],L2-config['pixel_width']*trim_result[0], B1, B2)
+            # temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])),L2-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])), B1, B2)
+        
+        roadwidths=estimate_road_width(
+            temperatures_trimmed.values,
+            config['roadwidth_threshold'],
+            config['roadwidth_adjust_left'],
+            config['roadwidth_adjust_right']) # fordi der fjernes noget i trimmed data, som gør at roadwidths ændres, derfor regnes det igen. Kan evt tilføjes i coldline funktionen. 
+        
+    else:
+        L1=0
+        L2=0
+        B1=0
+        B2=0      
+        
+    # print('TEMp_plot:',TEMP_PLOT)
+    print('temp',temperatures)    
+    print('StartTrim',StartTrim)
+    # print('RW',roadwidths)
+    print('Trim results',trim_result)
+    print('Trimmed data=',temperatures_trimmed)
+    # print('Raodwidths=',roadwidths)
+    # temperatures.to_csv(r'K:\DT\BBM\BEF\JLB1\Termografi\2024\colorbar_test/temp_data_1.csv')
     #-- herunder plottes rådata og trimmed data ud fra de parametre der sættes
     fig_heatmaps, (ax1, ax2) = plt.subplots(ncols=2, sharey = True)
     plt.suptitle('Raw data', fontsize=10)
     ax1.set_title('All data'); ax2.set_title('Trimmed data')
     nrn_functions.heatmaps_temperature_pixels(ax1, temperatures.values, metadata.distance, config['pixel_width'], include_colorbar=False)
+    print('DIS=',metadata.distance)
+    # nrn_functions.heatmaps_temperature_pixels(ax1, TEMP_PLOT.values, metadata.distance, config['pixel_width'], include_colorbar=False)
     ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
     #inkluder grænser på rå data figuren
-    ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end'],color='k' )
+    # ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end'],color='k' )
+    if coldlines==True:
+        # ax1.axvline(L1-config['pixel_width']*B1+1,color='b' );  ax1.axvline(L2-config['pixel_width']*B2+1,color='b' )
+        if B1==1:
+            # if config['pixel_width']==0.03:
+            #     ax1.axvline(L1*config['pixel_width']-(config['pixel_width']*(B1-1)-config['pixel_width']),color='b' )
+            #     ax1.axvline(L1*config['pixel_width']-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )
+            # else:
+                print('L1 line1 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']))
+                print('L1 line2 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2))
+                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2.4),color='b' )
+                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )
+            
+            
+            
+            
+            
+        if B2==1:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2.4),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )  
+        
+        if B1==2:
+            # if config['pixel_width']==0.03: # virker ikke helt korrekt endnu...
+            #     print('L1 line1 (B1=2):',L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2))
+            #     print('L1 line2 (B1=2):',L1-(config['pixel_width']*(1*B1-2)-(0.25/config['pixel_width'])*config['pixel_width']/1.5))
+                # ax1.axvline(L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2),color='b' )  
+                # ax1.axvline(L1-(config['pixel_width']*(1*B1-2)-(0.25/config['pixel_width'])*config['pixel_width']/1.5),color='b' )
+            # else:
+                
+                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
+                ax1.axvline(L1-(config['pixel_width']*(B1-2)-1*config['pixel_width']/1.5),color='b' )
+           
+        if B1==3:
+            # if config['pixel_width']==0.03:
+            #     ax1.axvline(L1-(config['pixel_width']*(1*B1-1)-1*config['pixel_width']/2),color='b' )  
+            #     ax1.axvline(L1-(config['pixel_width']*(1*B1-3)-3*(0.25/config['pixel_width'])*config['pixel_width']/1.5),color='b' )
+            # else:    
+                ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
+                ax1.axvline(L1-(config['pixel_width']*(B1-3)-3*config['pixel_width']/2),color='b' )    
+        if B1==4:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-4)-5*config['pixel_width']/2),color='b' )    
+        if B1==5:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-5)-7*config['pixel_width']/2),color='b' )
+            
+        if B1==6 and config['pixel_width']==0.03:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-6)-9*config['pixel_width']/2),color='b' )    
+            
+        if B1==7 and config['pixel_width']==0.03:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-7)-11*config['pixel_width']/2),color='b' )       
+            
+        if B1==8 and config['pixel_width']==0.03:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-8)-13*config['pixel_width']/2),color='b' )    
+        if B1==9 and config['pixel_width']==0.03:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-9)-15*config['pixel_width']/2),color='b' )    
+        if B1==10 and config['pixel_width']==0.03:
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8 # ret til ovenfor
+                
+            ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+            ax1.axvline(L1-(config['pixel_width']*(B1-10)-17*config['pixel_width']/2),color='b' )     
+            
+            
+            
+        if B2==2:
+            # if config['pixel_width']==0.03:
+              
+            #     B2=B2*8 # ret til ovenfor
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-2)-config['pixel_width']/1.5),color='b' )
+            
+        if B2==3:
+            # if config['pixel_width']==0.03:
+                
+            #     B2=B2*8 # ret til ovenfor
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-3)-3*config['pixel_width']/2),color='b' )
+            
+        if B2==4:
+            # if config['pixel_width']==0.03:
+               
+            #     B2=B2*8 # ret til ovenfor
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-4)-5*config['pixel_width']/2),color='b' )   
+            
+        if B2==5:
+            # if config['pixel_width']==0.03:
+                
+            #     B2=B2*8 # ret til ovenfor
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-5)-7*config['pixel_width']/2),color='b' ) 
+            
+        if config['pixel_width']==0.03 and B2==6:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-6)-9*config['pixel_width']/2),color='b' )
+            
+        if config['pixel_width']==0.03 and B2==7:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-7)-11*config['pixel_width']/2),color='b' )     
+        if config['pixel_width']==0.03 and B2==8:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-8)-13*config['pixel_width']/2),color='b' )     
+        if config['pixel_width']==0.03 and B2==9:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-9)-15*config['pixel_width']/2),color='b' )
+        if config['pixel_width']==0.03 and B2==10:
+            ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
+            ax1.axvline(L2-(config['pixel_width']*(B2-10)-17*config['pixel_width']/2),color='b' )     
+            
+        # ax1.axvline(config['manual_trim_transversal_start']+(-B1+B2)*config['pixel_width'],color='k' ); 
+        # ax1.axvline(config['manual_trim_transversal_start'],color='k' ); 
+        # ax1.axvline(config['manual_trim_transversal_end']+(2+B1-B2)*config['pixel_width'],color='k' )    
+    # else:
+    ax1.axvline(config['manual_trim_transversal_start'],color='k' );  
+    ax1.axvline(config['manual_trim_transversal_end'],color='k' )        
+        # nrn_functions.heatmaps_temperature_pixels(ax1, TEMP_PLOT.values, metadata.distance-((B1)*config['pixel_width']+(B2)*config['pixel_width']), config['pixel_width'], include_colorbar=False)    
+        # ax1.axvline(config['manual_trim_transversal_start']+((B1)*config['pixel_width']-(B2)*config['pixel_width']-2*config['pixel_width']),color='k' )  
+        # ax1.axvline(config['manual_trim_transversal_end']-((B2)*config['pixel_width']-(B1)*config['pixel_width'])+2*config['pixel_width'],color='k' )
+    # else:
+    # print('Temp_plot width',TEMP_PLOT.values.shape[1]*config['pixel_width'])    
+    # ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end']+(B2+B1+B1)*config['pixel_width'],color='k' )
     #inkluder longitudinal grænser også
     ax1.axhline(config['manual_trim_longitudinal_start'], color='k'); ax1.axhline(config['manual_trim_longitudinal_end'], color='k')
     ax1.set_ylim([ metadata.distance.iloc[-1],0 ])#når longitudinal linjer tilføjes sætter vi også en yaxis lim
     
     trimmed_data_df = temperatures_trimmed.values
-    nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
+    # trimmed_data_df1=pd.DataFrame(trimmed_data_df)
+    # trimmed_data_df1.to_csv(r'K:\DT\BBM\BEF\JLB1\Termografi\2024\colorbar_test/Trimmed_temp_data_1_061224.csv')
+    # nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
+    if coldlines==True:
+        nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
+        # nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]]-((B1)*config['pixel_width']+(B2)*config['pixel_width']), config['pixel_width'])
+    else:
+        nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
     ax2.set_xlabel('Road width [m]')
     plt.tight_layout()
     st.pyplot(fig_heatmaps)
+
+    # old version___________________________
+    #-- herunder plottes rådata og trimmed data ud fra de parametre der sættes
+    #fig_heatmaps, (ax1, ax2) = plt.subplots(ncols=2, sharey = True)
+    #plt.suptitle('Raw data', fontsize=10)
+    #ax1.set_title('All data'); ax2.set_title('Trimmed data')
+    #nrn_functions.heatmaps_temperature_pixels(ax1, temperatures.values, metadata.distance, config['pixel_width'], include_colorbar=False)
+    #ax1.set_ylabel('Distance [m]'); ax1.set_xlabel('Road width [m]')
+    #inkluder grænser på rå data figuren
+    #ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end'],color='k' )
+    #inkluder longitudinal grænser også
+    #ax1.axhline(config['manual_trim_longitudinal_start'], color='k'); ax1.axhline(config['manual_trim_longitudinal_end'], color='k')
+    #ax1.set_ylim([ metadata.distance.iloc[-1],0 ])#når longitudinal linjer tilføjes sætter vi også en yaxis lim
+    
+    #trimmed_data_df = temperatures_trimmed.values
+    #nrn_functions.heatmaps_temperature_pixels(ax2, trimmed_data_df, metadata.distance[trim_result[2]:trim_result[3]], config['pixel_width'])
+    #ax2.set_xlabel('Road width [m]')
+    #plt.tight_layout()
+    #st.pyplot(fig_heatmaps)
+#______________________________________
+
+    
     # Interactive plotly plot of the trimmed data 09122024
     st.toggle('Press to get interactive plot of the trimmed data', value=False, key='plot_trim')
     if st.session_state.plot_trim == True:
