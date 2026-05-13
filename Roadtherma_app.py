@@ -610,16 +610,17 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         S1=3.0
         S2=6.0
     if coldlines==True:
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            L1 = st.number_input('Point of the first line from the left', value=S1,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
-        with c2:
-            L2 = st.number_input('Point of the second line from the left', value=S2,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
-        with c3:
-            B1 = st.number_input('Pixel width of the first line', value=1,step=1,min_value=1,max_value=maxpixel, help='It cut towards the left')
-        with c4: 
-            B2 = st.number_input('Pixel width of the second line', value=1,step=1,min_value=0,max_value=maxpixel, help='It cut towards the left. Set to 0 if there is only one line')
-        submitButton1 = st.form_submit_button(label = 'Remove lines')
+        with st.form(key='columns_in_form'):
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                L1 = st.number_input('Point of the first line from the left', value=S1,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
+            with c2:
+                L2 = st.number_input('Point of the second line from the left', value=S2,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
+            with c3:
+                B1 = st.number_input('Pixel width of the first line', value=1,step=1,min_value=1,max_value=maxpixel, help='It cut towards the left')
+            with c4: 
+                B2 = st.number_input('Pixel width of the second line', value=1,step=1,min_value=0,max_value=maxpixel, help='It cut towards the left. Set to 0 if there is only one line')
+            submitButton1 = st.form_submit_button(label = 'Remove lines')
         
         
         print('trim offset 1',L1-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])))
