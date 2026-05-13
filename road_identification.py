@@ -654,7 +654,7 @@ def ColdLine(temperatures, config,L1,L2, B1, B2):
                 t.append(i)
            
             Temp=temperatures.drop(columns=t)    
-            temperatures=Temp
+        temperatures=Temp
     return temperatures 
         
        
