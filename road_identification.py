@@ -579,6 +579,83 @@ def trimguess(temperatures, config, TwoLane, ForceTrim, Less, High):
             #EndTrim=(k+1)*config['pixel_width']        
         #print('StartTrim=',StartTrim)
         #print('EndTrim=',EndTrim)
+
+# Removal of cold lines
+def ColdLine(temperatures, config,L1,L2, B1, B2):
+    if L1==0 or L2==0:
+        temperatures=temperatures
+    else:
+    
+    
+        if config['pixel_width']==0.03:
+            L1m=L1
+            L2m=L2
+        else:
+            L1m=L1/0.25
+            L2m=L2/0.25
+            
+        Temp=temperatures
+        if (L1!=0 or L2!=0) and (B1==1 and B2<=1):
+            if B2!=0:
+                Temp=temperatures.drop(columns=[temperatures.columns[int(L1m)],temperatures.columns[int(L2m)]])
+            else:
+                Temp=temperatures.drop(columns=[temperatures.columns[int(L1m)]])
+                
+        elif (L1!=0 or L2!=0) and (B1>1 and B2>1):   
+            
+            B1=B1-1
+            B2=B2-1
+            # if config['pixel_width']==0.03:
+            #     B1=B1*8
+            #     B2=B2*8
+            t=[]
+           
+            for i in temperatures.columns[int(L2m)-B2:int(L2m)+B2]:
+                t.append(i)
+                
+            for i in temperatures.columns[int(L1m)-B1:int(L1m)+B1]:
+                t.append(i)
+           
+            Temp=temperatures.drop(columns=t)    
+            
+            
+        elif (L1!=0 or L2!=0) and (B1==1 and B2>1) :   
+            B1=B1-1
+            B2=B2-1
         
-        #return StartTrim, EndTrim, TrimWarning
+            t=[]
+            
+            for i in temperatures.columns[int(L2m)-B2:int(L2m)+B2]:
+                t.append(i)
+            
+            t.append(temperatures.columns[int(L1m)])
+            Temp=temperatures.drop(columns=t)    
+            
+        elif (L1!=0 or L2!=0) and (B1>1 and B2==1) : 
+            B1=B1-1
+            B2=B2-1
+           
+            t=[]
+            for i in temperatures.columns[int(L1m)-B1:int(L1m)+B1]:
+                t.append(i)
+            
+            t.append(temperatures.columns[int(L2m)])
+            
+            Temp=temperatures.drop(columns=t)
+            
+      
+        
+        elif (L1!=0 or L2!=0) and (B1>1 and B2==0):   
+           
+            B1=B1-1
+           
+            t=[]
+            for i in temperatures.columns[int(L1m)-B1:int(L1m)+B1]:
+                t.append(i)
+           
+            Temp=temperatures.drop(columns=t)    
+            temperatures=Temp
+    return temperatures 
+        
+       
 
