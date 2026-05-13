@@ -24,7 +24,7 @@ def clean_data(temperatures, metadata, config):
         trim_result = crop_temperature_data(temperatures, metadata, config)
 
     column_start, column_end, row_start, row_end = trim_result
-    temperatures_trimmed = temperatures.iloc[row_start:row_end, column_start:column_end]
+    temperatures_trimmed = temperatures.iloc[row_start:row_end, column_start-1:column_end+1]
 
     lane_result = detect_paving_lanes(
         temperatures_trimmed,
