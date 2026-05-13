@@ -619,7 +619,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             B1 = st.number_input('Pixel width of the first line', value=1,step=1,min_value=1,max_value=maxpixel, help='It cut towards the left')
         with c4: 
             B2 = st.number_input('Pixel width of the second line', value=1,step=1,min_value=0,max_value=maxpixel, help='It cut towards the left. Set to 0 if there is only one line')
-        # submitButton1 = st.form_submit_button(label = 'Remove lines')
+        submitButton1 = st.form_submit_button(label = 'Remove lines')
         
         
         print('trim offset 1',L1-config['pixel_width']*(abs((trim_result[1]-trim_result[0])-temperatures.shape[1])))
