@@ -166,8 +166,8 @@ def estimate_road_width(pixels, threshold, adjust_left, adjust_right):
     """
     road_widths = []
     for idx in range(pixels.shape[0]):
-        start = _estimate_road_edge_right(pixels[idx, :], threshold)-1
-        end = _estimate_road_edge_left(pixels[idx, :], threshold)+1
+        start = _estimate_road_edge_right(pixels[idx, :], threshold)
+        end = _estimate_road_edge_left(pixels[idx, :], threshold)
         road_widths.append((start + adjust_left, end - adjust_right))
     return road_widths
 
