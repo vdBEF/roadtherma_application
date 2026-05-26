@@ -421,10 +421,11 @@ else:
     # defines the pixel width value based on the reader.
     if (config['reader']=='TF' or config['reader']=='Default') and c1>200:
         # config['pixel_width']=0.03; config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
-        config['pixel_width']=0.03; config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8
+        #config['pixel_width']=0.03; config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8
+        config['pixel_width']=0.03; config['roadwidth_adjust_left']=0; config['roadwidth_adjust_right']=0
         # st.write('pixel adjust:',config['roadwidth_adjust_left'])
-    else: config['pixel_width']=0.25; config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
-
+    else: #config['pixel_width']=0.25; config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
+        config['pixel_width']=0.25; config['roadwidth_adjust_left']=0; config['roadwidth_adjust_right']=0
 # if config['pixel_width'] == 0.25: config_default_values['roadwidth_adjust_left']=1; config_default_values['roadwidth_adjust_right']=1
 # if config['pixel_width'] == 0.03: config_default_values['roadwidth_adjust_left']=8; config_default_values['roadwidth_adjust_right']=8
 
@@ -546,8 +547,10 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
         config['pixel_width'] = st.selectbox('Pixel width in meters.', [0.25, 0.03], index=index_default)
-        if config['pixel_width'] == 0.25: config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
-        if config['pixel_width'] == 0.03: config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8  
+        #if config['pixel_width'] == 0.25: config['roadwidth_adjust_left']=1; config['roadwidth_adjust_right']=1
+        #if config['pixel_width'] == 0.03: config['roadwidth_adjust_left']=8; config['roadwidth_adjust_right']=8 
+        if config['pixel_width'] == 0.25: config['roadwidth_adjust_left']=0; config['roadwidth_adjust_right']=0
+        if config['pixel_width'] == 0.03: config['roadwidth_adjust_left']=0; config['roadwidth_adjust_right']=0      
         
     # st.write('Because of the chosen camera type the pixel width [m] is: ', config['pixel_width'])
 
