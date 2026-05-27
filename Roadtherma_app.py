@@ -681,6 +681,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     # ax1.axvline(config['manual_trim_transversal_start'],color='k' );  ax1.axvline(config['manual_trim_transversal_end'],color='k' )
     if coldlines==True:
         # ax1.axvline(L1-config['pixel_width']*B1+1,color='b' );  ax1.axvline(L2-config['pixel_width']*B2+1,color='b' )
+        B1=len(L1)
         if B1==1:
            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
                 #print('L1 line1 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']))
