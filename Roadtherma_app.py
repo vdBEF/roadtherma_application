@@ -619,9 +619,9 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             with c1:
                 FP=list(map(int,[s.strip('T') for s in temperatures_trimmed.columns]))[0]
                 LP=list(map(int,[s.strip('T') for s in temperatures_trimmed.columns]))[-1]
-                L1= st.multiselect('Remove cold lines based on the middle of the pixel position [m] (Based on Trimmed data plot)',list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: -FP*config['pixel_width']+x*config['pixel_width'],
+                L1= st.multiselect('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: x*config['pixel_width'],
                                         list(map(float,[s.strip('T') for s in temperatures_trimmed.columns]))))))[1:len(temperatures_trimmed.columns)-1],
-                                        default=[],max_selections=10,help='Remove all chosen options and press "Remove lines" to reset')
+                                        default=[],max_selections=30,help='Remove all chosen options and press "Remove lines" to reset')
                 l1s=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [0]
                 l1e=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [-1]
             
@@ -641,13 +641,13 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         #print('L1m',int((L1/config['pixel_width']-(temperatures.shape[1]-abs((trim_result[1]-trim_result[0]))))))
         
         #print('L1m',int((L1/config['pixel_width']-trim_result[0])))
-        
-        if config['pixel_width']==0.03:
+        temperatures_trimmed.drop(columns=temperatures_trimmed.columns[list(map(int,(list(map(lambda x: (x)/config['pixel_width']-FP,L1)))))],inplace=True)
+        #if config['pixel_width']==0.03:
             #temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1/0.03-trim_result[0],L2/0.03-trim_result[0], B1, B2)
-            temperatures_trimmed.drop(columns=temperatures_trimmed.columns[list(map(int,(list(map(lambda x: x/config['pixel_width'],L1)))))],inplace=True)
-        else:
+         #   temperatures_trimmed.drop(columns=temperatures_trimmed.columns[list(map(int,(list(map(lambda x: x/config['pixel_width'],L1)))))],inplace=True)
+        #else:
             #temperatures_trimmed=ColdLine(temperatures_trimmed, config,L1-config['pixel_width']*trim_result[0],L2-config['pixel_width']*trim_result[0], B1, B2)
-            temperatures_trimmed.drop(columns=temperatures_trimmed.columns[list(map(int,(list(map(lambda x: x/config['pixel_width'],L1)))))],inplace=True)
+         #   temperatures_trimmed.drop(columns=temperatures_trimmed.columns[list(map(int,(list(map(lambda x: x/config['pixel_width'],L1)))))],inplace=True)
            
         roadwidths=estimate_road_width(
             temperatures_trimmed.values,
@@ -682,139 +682,23 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
     if coldlines==True:
         # ax1.axvline(L1-config['pixel_width']*B1+1,color='b' );  ax1.axvline(L2-config['pixel_width']*B2+1,color='b' )
         B1=len(L1)
-        if B1==1:
-           ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-                #print('L1 line1 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']))
-                #print('L1 line2 (B1=1):',L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2))
-                #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2.4),color='b' )
-                #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )
-         
-        #if B2==1:
-        #    ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2.4),color='b' )
-        #    ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )  
-        
-        if B1==2:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
-            #ax1.axvline(L1-(config['pixel_width']*(B1-2)-1*config['pixel_width']/1.5),color='b' )
-           
-        if B1==3:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' )  
-            #ax1.axvline(L1-(config['pixel_width']*(B1-3)-3*config['pixel_width']/2),color='b' )    
-        if B1==4:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-4)-5*config['pixel_width']/2),color='b' )    
-        if B1==5: 
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-5)-7*config['pixel_width']/2),color='b' )
-            
-        if B1==6: #and config['pixel_width']==0.03: 
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[5]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-6)-9*config['pixel_width']/2),color='b' )    
-            
-        if B1==7:# and config['pixel_width']==0.03:
-            # if config['pixel_width']==0.03:
-            #     B1=B1*8 # ret til ovenfor
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[5]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[6]+l1s-config['pixel_width']/2,color='b' )    
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-7)-11*config['pixel_width']/2),color='b' )       
-            
-        if B1==8:# and config['pixel_width']==0.03:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[5]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[6]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[7]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-8)-13*config['pixel_width']/2),color='b' )    
-        if B1==9:# and config['pixel_width']==0.03:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[5]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[6]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[7]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[8]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-9)-15*config['pixel_width']/2),color='b' )    
-        if B1==10:# and config['pixel_width']==0.03:
-            ax1.axvline(L1[0]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[1]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[2]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[3]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[4]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[5]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[6]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[7]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[8]+l1s-config['pixel_width']/2,color='b' )
-            ax1.axvline(L1[9]+l1s-config['pixel_width']/2,color='b' )
-            #ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
-            #ax1.axvline(L1-(config['pixel_width']*(B1-10)-17*config['pixel_width']/2),color='b' )     
-            
-            
-            
-        #if B2==2:
-        #    ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-        #    ax1.axvline(L2-(config['pixel_width']*(B2-2)-config['pixel_width']/1.5),color='b' )
-            
-        #if B2==3:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-3)-3*config['pixel_width']/2),color='b' )
-            
-        #if B2==4:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-4)-5*config['pixel_width']/2),color='b' )   
-            
-        #if B2==5:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-5)-7*config['pixel_width']/2),color='b' ) 
-            
-        #if config['pixel_width']==0.03 and B2==6:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-6)-9*config['pixel_width']/2),color='b' )
-            
-        #if config['pixel_width']==0.03 and B2==7:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-7)-11*config['pixel_width']/2),color='b' )     
-        #if config['pixel_width']==0.03 and B2==8:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-8)-13*config['pixel_width']/2),color='b' )     
-        #if config['pixel_width']==0.03 and B2==9:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-9)-15*config['pixel_width']/2),color='b' )
-        #if config['pixel_width']==0.03 and B2==10:
-         #   ax1.axvline(L2-(config['pixel_width']*(B2-1)-config['pixel_width']/2),color='b' )
-          #  ax1.axvline(L2-(config['pixel_width']*(B2-10)-17*config['pixel_width']/2),color='b' )     
+        if len(L1)>=1:
+             # if config['pixel_width']==0.03:
+             #     B1=B1*8 # ret til ovenfor
+                 
+             # ax1.axvline(L1-(config['pixel_width']*(B1-1)-config['pixel_width']/2),color='b' ) 
+             # ax1.axvline(L1-(config['pixel_width']*(B1-10)-17*config['pixel_width']/2),color='b' ) 
+             for kkl1 in range(len(L1)):
+                 # ax1.axvline(L1[kkl1],color='b',linewidth=1  )
+                 if config['pixel_width']==0.03:
+                     if len(L1)<3:
+                         ax1.axvline(L1[kkl1],color='b',linewidth=1  )
+                     elif len(L1)<5:
+                         ax1.axvline(L1[kkl1],color='b',linewidth=0.3  )    
+                     else:    
+                         ax1.axvline(L1[kkl1],color='b',linewidth=0.25  )
+                 else:
+                     ax1.axvline(L1[kkl1],color='b',linewidth=1  )  
             
         # ax1.axvline(config['manual_trim_transversal_start']+(-B1+B2)*config['pixel_width'],color='k' ); 
         # ax1.axvline(config['manual_trim_transversal_start'],color='k' ); 
