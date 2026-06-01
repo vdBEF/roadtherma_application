@@ -613,17 +613,33 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         S1=3.0
         S2=6.0
     if coldlines==True:
+        twoCL=st.toggle('Second cold straight line in the data', value=False, help='Trying to remove cold lines',key='SL') # TEST of cold line removal
         with st.form(key='columns_in_form1'):
             #c1, c2, c3, c4 = st.columns(4)
             c1, = st.columns(1)
             with c1:
                 FP=list(map(int,[s.strip('T') for s in temperatures_trimmed.columns]))[0]
                 LP=list(map(int,[s.strip('T') for s in temperatures_trimmed.columns]))[-1]
-                L1= st.multiselect('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: x*config['pixel_width'],
-                                        list(map(float,[s.strip('T') for s in temperatures_trimmed.columns]))))))[1:len(temperatures_trimmed.columns)-1],
-                                        default=[],max_selections=30,help='Remove all chosen options and press "Remove lines" to reset')
-                l1s=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [0]
-                l1e=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [-1]
+                #L1= st.multiselect('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: x*config['pixel_width'],
+                #                        list(map(float,[s.strip('T') for s in temperatures_trimmed.columns]))))))[1:len(temperatures_trimmed.columns)-1],
+                #                        default=[],max_selections=30,help='Remove all chosen options and press "Remove lines" to reset')
+                L1= st.select_slider('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',
+                                     options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
+                                  # options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
+                                   value=(3+config['pixel_width']/2,3+config['pixel_width']+config['pixel_width']/2),key='SL1')
+                
+                L1=np.arange(L1[0],L1[1]+config['pixel_width'],config['pixel_width'])
+            
+                #l1s=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [0]
+                #l1e=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [-1]
+            if twoCL==True:
+                c2,= st.columns(1)        
+                    with c2:        
+                        L2= st.select_slider('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',
+                                  options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
+                                   value=(6+config['pixel_width']/2,6+config['pixel_width']+config['pixel_width']/2),key='SL2')
+                        L2=np.arange(L2[0],L2[1]+config['pixel_width'],config['pixel_width'])
+                    L1=np.concatenate((L1,L2))    
             
             #with c1:
             #    L1 = st.number_input('Point of the first line from the left', value=S1,step=config['pixel_width'],min_value=0.0,max_value=20.0, help='If the line has a width over 1 pixel choose the point left most of the line')-config['pixel_width']
