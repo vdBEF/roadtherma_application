@@ -542,7 +542,8 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         ForceTrim=st.toggle('Force autotrim to run', value=False,help='Force twolane autotrim to run.')
         Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
         High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.')
-        coldlines=st.toggle('Cold straight line in the data', value=False, help='Trying to remove cold lines') 
+        coldlines=st.toggle('Cold straight line in the data', value=False, help='Trying to remove cold lines')
+        Sidepixel=st.toggle('Amount of pixel removed from either side after trim', value=False, help='Removes outer road pixels if necessary. Normal amount: 8 for TF and 1 for Vog/Moba') # TEST
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
         elif config_default_values['pixel_width'] == 0.03:  index_default = 1
@@ -675,7 +676,25 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         L1=0
         L2=0
         B1=0
-        B2=0      
+        B2=0
+        
+    if Sidepixel==True: 
+        c1, c2 = st.columns(2)
+        with c1:
+            LP = st.number_input('Amount of pixels removed from the left', value=0,step=1,min_value=0,max_value=10)
+            
+        with c2:
+            RP = st.number_input('Amount of pixels removed from the right', value=0,step=1,min_value=0,max_value=10)    
+    
+        roadwidths=estimate_road_width(
+            temperatures_trimmed.values,
+            config['roadwidth_threshold'],
+            config['roadwidth_adjust_left']+LP,
+            config['roadwidth_adjust_right']+RP) # fordi der fjernes noget i trimmed data, som gør at roadwidths ændres, derfor regnes det igen. Kan evt tilføjes i coldline funktionen. 
+    
+    else:
+        LP=0
+        RP=0
         
     # print('TEMp_plot:',TEMP_PLOT)
     #print('temp',temperatures)    
