@@ -545,7 +545,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
         High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.')
         coldlines=st.toggle('Cold straight line in the data', value=False, help='Trying to remove cold lines')
-        Sidepixel=st.toggle('Amount of pixel removed from either side after trim', value=False, help='Removes outer road pixels if necessary. Normal amount: 8 for TF and 1 for Vog/Moba') # TEST
+        Sidepixel=st.toggle('Amount of pixels removed from either side after trim', value=False, help='Removes outer road pixels if necessary. Normal amount: 8 for TF and 1 for Vog/Moba') # TEST
     
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
