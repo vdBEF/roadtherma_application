@@ -697,7 +697,8 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             config['roadwidth_threshold'],
             config['roadwidth_adjust_left']+LP,
             config['roadwidth_adjust_right']+RP) # fordi der fjernes noget i trimmed data, som gør at roadwidths ændres, derfor regnes det igen. Kan evt tilføjes i coldline funktionen. 
-    
+        config['roadwidth_adjust_left']=LP
+        config['roadwidth_adjust_right']=RP
     else:
         LP=0
         RP=0
