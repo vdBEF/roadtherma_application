@@ -692,7 +692,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
             
             with c2:
                 RP = st.number_input('Number of pixels removed from the right', value=0,step=1,min_value=0,max_value=10)    
-    
+        submitButton2 = st.form_submit_button(label = 'Remove pixels') #When pressed the new values is used.
         roadwidths=estimate_road_width(
             temperatures_trimmed.values,
             config['roadwidth_threshold'],
