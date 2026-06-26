@@ -545,7 +545,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         Less=st.toggle('Lower limit for autotrim', value=False, help='Lowers the limit resulting in less aggressive trimming.')
         High=st.toggle('Higher limit for twolane autotrim', value=False, help='Increases the limit resulting in more aggressive trimming.')
         coldlines=st.toggle('Cold straight line in the data', value=False, help='Trying to remove cold lines')
-        Sidepixel=st.toggle('Amount of pixels removed from either side after trim', value=False, help='Removes outer road pixels if necessary. Normal amount: 8 for TF and 1 for Vog/Moba') # TEST
+        Sidepixel=st.toggle('Number of pixels removed from either side after trim', value=True, help='Removes outer road pixels if necessary. Normal amount: 8 for TF and 1 for Vog/Moba') # TEST
     
     if st.session_state.overwritepixel==True:
         if config_default_values['pixel_width'] == 0.25:  index_default = 0 
@@ -685,12 +685,13 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         B2=0
         
     if Sidepixel==True: 
-        c1, c2 = st.columns(2)
-        with c1:
-            LP = st.number_input('Amount of pixels removed from the left', value=0,step=1,min_value=0,max_value=10)
+        with st.form(key='columns_in_form'):
+            c1, c2 = st.columns(2)
+            with c1:
+                LP = st.number_input('Number of pixels removed from the left', value=0,step=1,min_value=0,max_value=10)
             
-        with c2:
-            RP = st.number_input('Amount of pixels removed from the right', value=0,step=1,min_value=0,max_value=10)    
+            with c2:
+                RP = st.number_input('Number of pixels removed from the right', value=0,step=1,min_value=0,max_value=10)    
     
         roadwidths=estimate_road_width(
             temperatures_trimmed.values,
