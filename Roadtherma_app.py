@@ -685,7 +685,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
         B2=0
         
     if Sidepixel==True: 
-        with st.form(key='columns_in_form'):
+        with st.form(key='columns_in_form2'):
             c1, c2 = st.columns(2)
             with c1:
                 LP = st.number_input('Number of pixels removed from the left', value=0,step=1,min_value=0,max_value=10)
