@@ -630,7 +630,7 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
                 L1= st.select_slider('Remove cold lines based on the middle of the pixel position [m] (Based on All data plot)',
                                      options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
                                   # options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
-                                   value=(3+config['pixel_width']/2,3+config['pixel_width']+config['pixel_width']/2),key='SL1')
+                                   value=((FP+1)*config['pixel_width']+config['pixel_width']/2,FP*config['pixel_width']+config['pixel_width']+config['pixel_width']/2),key='SL1')
                 F1=np.round((L1[1]/config['pixel_width'])-(L1[0]/config['pixel_width']),1)
                 L1=np.linspace(L1[0],L1[1],num=int(F1)+1)    
                 #L1=np.arange(L1[0],L1[1]+config['pixel_width'],config['pixel_width'])
