@@ -217,6 +217,8 @@ config['moving_average_percent'] = config_default_values['moving_average_percent
 config['moving_average_enabled'] = config_default_values['moving_average_enabled']#st.sidebar.toggle('moving_average_enabled', value=config_default_values['moving_average_enabled'])#moving_average_enabled: True  # Whether or not to make detections using the "moving average" method.
 config['roadwidth_adjust_left'] = config_default_values['roadwidth_adjust_left'] # st.sidebar.number_input('Additional number of pixels to cut off left edge after estimating road width (roadwidth_adjust_left)', value=config_default_values['roadwidth_adjust_left'] , step=1)
 config['roadwidth_adjust_right'] = config_default_values['roadwidth_adjust_right'] # st.sidebar.number_input('Additional number of pixels to cut off right edge after estimating road width ( roadwidth_adjust_right)', value=config_default_values['roadwidth_adjust_right'] , step=1)
+config['cold_line_1']=False
+config['cold_line_2']=False
 config['title'] = 'Example plot of test section'  # String used as title in the figures created. Mandatory
 title= config['title']
 ########---------------------------------------------------------------------
@@ -632,7 +634,9 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
                                   # options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
                                    value=((FP+1)*config['pixel_width']+config['pixel_width']/2,FP*config['pixel_width']+config['pixel_width']+config['pixel_width']/2),key='SL1')
                 F1=np.round((L1[1]/config['pixel_width'])-(L1[0]/config['pixel_width']),1)
-                L1=np.linspace(L1[0],L1[1],num=int(F1)+1)    
+                L1=np.linspace(L1[0],L1[1],num=int(F1)+1)
+                config['cold_line_1']=str(L1)
+
                 #L1=np.arange(L1[0],L1[1]+config['pixel_width'],config['pixel_width'])
             
                 #l1s=list(map(lambda x: x+config['pixel_width']/2,list(map(lambda x: x*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))) [0]
@@ -644,7 +648,8 @@ elif run_trimming_checkbox and uploaded_file != None and config['reader'] != Non
                                   options= list(map(lambda x: round(x+config['pixel_width']/2,3),list(map(lambda x: (x)*config['pixel_width'],list(map(float,[s.strip('T') for s in temperatures_trimmed.columns])))))),
                                    value=(6+config['pixel_width']/2,6+config['pixel_width']+config['pixel_width']/2),key='SL2')
                     F2=np.round((L2[1]/config['pixel_width'])-(L2[0]/config['pixel_width']),1)
-                    L2=np.linspace(L2[0],L2[1],num=int(F2)+1)     
+                    L2=np.linspace(L2[0],L2[1],num=int(F2)+1)
+                    config['cold_line_2']=str(L2)
                     #L2=np.arange(L2[0],L2[1]+config['pixel_width'],config['pixel_width'])
                 L1=np.concatenate((L1,L2))    
             
