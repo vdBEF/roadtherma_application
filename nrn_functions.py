@@ -70,7 +70,7 @@ def create_identified_road_pixels(pixels_raw, trim_result, lane_result, roadwidt
     pixel_category = np.zeros(pixels_raw.shape, dtype='int')
     trim_col_start, trim_col_end, trim_row_start, trim_row_end = trim_result
     lane_start, lane_end = lane_result
-    view = pixel_category[trim_row_start:trim_row_end, trim_col_start:trim_col_end+1]
+    view = pixel_category[trim_row_start:trim_row_end, trim_col_start-1:trim_col_end+1]
 
     for longitudinal_idx, (road_start, road_end) in enumerate(roadwidths):
         view[:, lane_start:lane_end][longitudinal_idx, road_start:road_end] = 1
